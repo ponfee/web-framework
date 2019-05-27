@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ponfee.web.framework.dao.mapper.PermitMapper">
+
+    <sql id="baseColumns">
+        permit_id,parent_id,permit_name,permit_icon,permit_type,permit_url,
+        orders,status,create_by,create_tm,update_by,update_tm,version
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_permit (
+            parent_id,permit_id,permit_name,permit_icon,permit_type,
+            permit_url,orders,status,create_by,create_tm,update_by,update_tm,version
+        ) VALUES ( 
+            #{parentId},#{permitId},#{permitName},#{permitIcon},#{permitType},
+            #{permitUrl},#{orders},#{status},#{createBy},now(),#{updateBy},now(),1
+        )
+    </insert>
+
+    <delete id="deleteByPermitIds">
+        DELETE FROM t_permit WHERE permit_id IN 
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">#{id}</foreach>
+    </delete>
+
+    <update id="update">
+        UPDATE t_permit 
+        SET parent_id=#{parentId}, permit_name=#{permitName}, permit_icon=#{permitIcon},
+            permit_type=#{permitType}, permit_url=#{permitUrl}, orders=#{orders},
+            status=#{status}, update_by=#{updateBy}, version=version+1, update_tm=now()
+        WHERE permit_id=#{permitId}
+    </update>
+
+    <select id="getByPermitId" resultType="cn.ponfee.web.framework.model.Permit">
+        SELECT <include refid="baseColumns" />
+        FROM t_permit WHERE permit_id=#{permitId}
+    </select>
+
+    <select id="listAll" resultType="cn.ponfee.web.framework.model.Permit">
+        SELECT <include refid="baseColumns"/> FROM t_permit 
+    </select>
+
+</mapper>

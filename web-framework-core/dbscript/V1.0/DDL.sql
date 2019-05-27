@@ -1,0 +1,75 @@
+DROP TABLE IF EXISTS `t_user`;
+CREATE TABLE IF NOT EXISTS `t_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `username` varchar(32) NOT NULL COMMENT '用户名（登录账号）',
+  `password` varchar(100) NOT NULL COMMENT '用户密码',
+  `nickname` varchar(60) DEFAULT NULL COMMENT '昵称',
+  `mobile_phone` varchar(16) DEFAULT NULL COMMENT '手机号码',
+  `status` tinyint(1) unsigned NOT NULL COMMENT '状态：0禁用；1启用；',
+  `is_deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否已被删除：1是；0否；',
+  `create_by` bigint(20) unsigned NOT NULL COMMENT '创建人',
+  `create_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` bigint(20) unsigned NOT NULL COMMENT '最近更新人',
+  `update_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最近更新时间',
+  `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '版本号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_username` (`username`) USING BTREE,
+  KEY `idx_updatetm` (`update_tm`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
+DROP TABLE IF EXISTS `t_role`;
+CREATE TABLE IF NOT EXISTS `t_role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `role_code` varchar(30) NOT NULL COMMENT '角色代码：英文数字下划线组成',
+  `role_name` varchar(255) DEFAULT NULL COMMENT '角色名称',
+  `status` tinyint(1) unsigned NOT NULL COMMENT '状态：0无效；1有效；',
+  `create_by` bigint(20) unsigned NOT NULL COMMENT '创建人',
+  `create_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` bigint(20) unsigned NOT NULL COMMENT '最近更新人',
+  `update_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最近更新时间',
+  `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '版本号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_role_code` (`role_code`) USING BTREE,
+  KEY `idx_rolename` (`role_name`),
+  KEY `idx_updatetm` (`update_tm`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='角色表';
+
+
+DROP TABLE IF EXISTS `t_permit`;
+CREATE TABLE IF NOT EXISTS `t_permit` (
+  `permit_id` varchar(50) NOT NULL COMMENT '权限编号，英文数字下划线组成',
+  `parent_id` varchar(50) DEFAULT NULL COMMENT '父权限编号：没有父权限时为空',
+  `permit_name` varchar(255) DEFAULT NULL COMMENT '权限名称',
+  `permit_icon` varchar(512) DEFAULT NULL COMMENT '权限图标',
+  `permit_type` tinyint(3) unsigned NOT NULL COMMENT '类型：1菜单目录；2页面按钮；',
+  `permit_url` varchar(512) DEFAULT NULL COMMENT '权限url，相对根路径的地址',
+  `orders` tinyint(3) unsigned NOT NULL COMMENT '排序序号',
+  `status` tinyint(1) unsigned NOT NULL COMMENT '状态：0禁用；1启用；',
+  `create_by` bigint(20) unsigned NOT NULL COMMENT '创建人',
+  `create_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` bigint(20) unsigned NOT NULL COMMENT '最近更新人',
+  `update_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最近更新时间',
+  `version` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '版本号',
+  PRIMARY KEY `pk_permit_id` (`permit_id`) USING BTREE,
+  KEY `idx_parentid` (`parent_id`) USING BTREE,
+  KEY `idx_updatetm` (`update_tm`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
+
+
+DROP TABLE IF EXISTS `t_user_role`;
+CREATE TABLE IF NOT EXISTS `t_user_role` (
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户ID',
+  `role_id` bigint(20) unsigned NOT NULL COMMENT '角色ID',
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `idx_roleid` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色关联表';
+
+
+DROP TABLE IF EXISTS `t_role_permit`;
+CREATE TABLE IF NOT EXISTS `t_role_permit` (
+  `role_id` bigint(20) unsigned NOT NULL COMMENT '角色ID',
+  `permit_id` varchar(50) NOT NULL COMMENT '权限编码',
+  PRIMARY KEY (`role_id`,`permit_id`),
+  KEY `idx_permitid` (`permit_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色权限关联表';

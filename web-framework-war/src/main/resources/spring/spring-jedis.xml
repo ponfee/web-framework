@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  ">
+
+  <!-- redis分片+哨兵模式 -->
+  <bean id="jedisClient" class="code.ponfee.commons.jedis.JedisClient" destroy-method="destroy">
+    <constructor-arg index="0">
+      <bean class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="50" />
+        <property name="maxIdle" value="2" />
+        <property name="minIdle" value="1" />
+        <property name="maxWaitMillis" value="60000" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="testWhileIdle" value="false" />
+        <property name="numTestsPerEvictionRun" value="-1" />
+        <property name="minEvictableIdleTimeMillis" value="60000" />
+        <property name="timeBetweenEvictionRunsMillis" value="30000" />
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1" value="${redis.sentinel.master}" />
+    <constructor-arg index="2" value="${redis.sentinel.server}" />
+    <constructor-arg index="3" value="${redis.sentinel.passwd}" />
+    <constructor-arg index="4">
+      <bean class="code.ponfee.commons.serial.KryoSerializer" />
+    </constructor-arg>
+  </bean>
+
+</beans>

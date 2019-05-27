@@ -1,0 +1,5 @@
+# * text eol=lf
+
+# eclipse -> Windows -> Preference -> General -> workspace -> Unix
+# git config --global core.autocrlf input
+# git config --global core.safecrlf true

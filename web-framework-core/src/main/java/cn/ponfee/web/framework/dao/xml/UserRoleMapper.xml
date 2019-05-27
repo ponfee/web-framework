@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ponfee.web.framework.dao.mapper.UserRoleMapper">
+
+    <insert id="insert">
+        INSERT INTO t_user_role (user_id, role_id) VALUES 
+        <foreach collection="list" item="o" index="index" separator=",">
+            (#{o.userId}, #{o.roleId})
+        </foreach>
+    </insert>
+
+    <delete id="delByUserId">
+        DELETE FROM t_user_role WHERE user_id=#{userId}
+    </delete>
+
+    <delete id="delByRoleId">
+        DELETE FROM t_user_role WHERE role_id=#{roleId}
+    </delete>
+
+    <select id="queryByUserId" resultType="cn.ponfee.web.framework.model.Role">
+        SELECT id, role_code, role_name, status FROM t_role
+        WHERE id IN (
+            SELECT role_id FROM t_user_role WHERE user_id=#{userId}
+        )
+    </select>
+
+    <select id="queryUserPermits" resultType="string">
+        SELECT permit_id FROM t_role_permit 
+        WHERE role_id IN (
+          SELECT role_id FROM t_user_role WHERE user_id=#{userId}
+        )
+    </select>
+</mapper>

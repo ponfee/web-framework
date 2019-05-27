@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ponfee.web.framework.dao.mapper.UserMapper">
+
+    <resultMap type="cn.ponfee.web.framework.model.User" id="getByIdMap">
+      <id property="id" column="id" />
+      <id property="username" column="username" />
+      <id property="mobilePhone" column="mobile_phone" />
+      <id property="nickname" column="nickname" />
+      <id property="status" column="status" />
+      <id property="deleted" column="is_deleted" />
+    </resultMap>
+
+    <resultMap type="cn.ponfee.web.framework.model.User" id="getByUsernameMap">
+      <id property="id" column="id" />
+      <id property="username" column="username" />
+      <id property="mobilePhone" column="mobile_phone" />
+      <id property="nickname" column="nickname" />
+      <id property="password" column="password" />
+      <id property="status" column="status" />
+      <id property="deleted" column="is_deleted" />
+    </resultMap>
+
+    <sql id="update_columns">
+        ,version=version+1,update_tm=now()
+    </sql>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user (
+            username,password,status,nickname,mobile_phone,
+            is_deleted,create_by,create_tm,update_by,update_tm,version
+        ) VALUES 
+        <foreach collection="list" item="o" index="index" separator=",">
+            (#{o.username},#{o.password},#{o.status},#{o.nickname},#{o.mobilePhone},
+             #{o.deleted},#{o.createBy},now(),#{o.updateBy},now(),1)
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE t_user SET 
+        <if test="nickname!=null">nickname=#{nickname},</if>
+        <if test="mobilePhone!=null">mobile_phone=#{mobilePhone},</if>
+        <if test="password!=null and password!=''">password=#{password},</if>
+        update_by=#{id}<include refid="update_columns" />
+        WHERE id=#{id}
+    </update>
+
+    <update id="changeStatus">
+        UPDATE t_user 
+        SET status=#{status},
+            update_by=#{updateBy}<include refid="update_columns" />
+        WHERE id=#{id}
+    </update>
+
+    <update id="logicDelete">
+        UPDATE t_user 
+        SET is_deleted=true,
+            update_by=#{updateBy}<include refid="update_columns" />
+        WHERE id IN 
+        <foreach collection="uids" item="uid" index="index" open="(" close=")" separator=",">#{uid}</foreach>
+    </update>
+
+    <select id="checkUsernameIsExists" resultType="boolean">
+        SELECT COUNT(*) flag FROM (
+          SELECT 'X' FROM t_user WHERE username=#{username} LIMIT 1
+        ) t
+    </select>
+
+    <select id="getByUsername" resultMap="getByUsernameMap">
+        SELECT u.id,u.username,u.mobile_phone,u.nickname,u.password,
+               u.status,u.is_deleted
+        FROM t_user u 
+        WHERE username=#{username}
+    </select>
+
+    <select id="getById" resultMap="getByIdMap">
+        SELECT u.id,u.username,u.mobile_phone,u.nickname,
+               u.status,u.is_deleted
+        FROM t_user u 
+        WHERE id=#{id}
+    </select>
+
+    <select id="query4list" resultType="map">
+        SELECT u.id, u.username, u.nickname, u.mobile_phone mobilePhone, 
+               u.status, u.is_deleted deleted, 
+        FROM t_user u
+        <where>
+            <!-- <if test="nickname!=null and nickname!=''">nickname LIKE "%"#{nickname}"%"</if> -->
+            <!-- <if test="nickname!=null and nickname!=''">
+              <bind name="pattern" value="'%' + _parameter.nickname + '%'" />
+              u.nickname LIKE #{pattern}
+            </if> -->
+            <if test="nickname!=null and nickname!=''">(nickname LIKE CONCAT('%',#{nickname},'%') OR u.username=#{nickname})</if>
+            <if test="username!=null and username!=''">AND (nickname LIKE CONCAT('%',#{username},'%') OR u.username=#{username})</if>
+            <if test="deleted!=null">AND u.is_deleted=#{deleted}</if>
+            <if test="status!=null and status!=''">AND u.status=#{status}</if>
+        </where>
+        ORDER BY u.update_tm DESC 
+    </select>
+
+</mapper>

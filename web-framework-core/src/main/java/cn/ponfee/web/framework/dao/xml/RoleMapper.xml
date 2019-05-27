@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ponfee.web.framework.dao.mapper.RoleMapper">
+
+    <sql id="baseColumns">
+        id,role_code,role_name,status,
+        create_by,create_tm,update_by,update_tm,version
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_role (
+            role_code,role_name,status,
+            create_by,create_tm,update_by,update_tm,version
+        ) VALUES (
+            #{roleCode},#{roleName},#{status},
+            #{createBy},now(),#{updateBy},now(),1
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_role 
+        SET <if test="roleName!=null">role_name=#{roleName},</if>
+            <if test="roleCode">role_code=#{roleCode},</if>
+            <if test="status!=null">status=#{status},</if>
+            update_by=#{updateBy},version=version+1,update_tm=now()
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_role WHERE id=#{roleId}
+    </delete>
+
+    <select id="getById" resultType="cn.ponfee.web.framework.model.Role">
+        SELECT <include refid="baseColumns" />
+        FROM t_role WHERE id=#{id}
+    </select>
+
+    <select id="getByRoleCode" resultType="cn.ponfee.web.framework.model.Role">
+        SELECT <include refid="baseColumns" />
+        FROM t_role WHERE role_code=#{roleCode}
+    </select>
+
+    <select id="query4list" resultType="cn.ponfee.web.framework.model.Role">
+        SELECT <include refid="baseColumns"/>
+        FROM t_role 
+        <where>
+            <if test="roleName!=null">roleName LIKE "%"#{roleName}"%"</if>
+            <if test="roleCode!=null">AND role_code=#{roleCode}</if>
+            <if test="status!=null">AND status=#{status}</if>
+        </where>
+        ORDER BY update_tm DESC 
+    </select>
+</mapper>
