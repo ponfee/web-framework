@@ -101,7 +101,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <finalName>${project.artifactId}</finalName>
+              <finalName>${project.parent.artifactId}</finalName>
               <skipAssembly>false</skipAssembly>
               <descriptors>
                 <descriptor>src/main/assembly/assembly.xml</descriptor>
