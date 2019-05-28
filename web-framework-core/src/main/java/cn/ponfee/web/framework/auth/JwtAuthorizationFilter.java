@@ -1,6 +1,9 @@
 package cn.ponfee.web.framework.auth;
 
+import static code.ponfee.commons.model.ResultCode.BAD_REQUEST;
 import static code.ponfee.commons.model.ResultCode.FORBIDDEN;
+import static code.ponfee.commons.model.ResultCode.NOT_FOUND;
+import static code.ponfee.commons.model.ResultCode.OK;
 import static code.ponfee.commons.model.ResultCode.REDIRECT;
 import static code.ponfee.commons.model.ResultCode.UNAUTHORIZED;
 
@@ -91,6 +94,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String requestURI = super.getPathWithinApplication(request);
+
         /*if (UrlPermissionMatcher.isNotMapping(requestURI)) {
             return true; // is spring mvc controller url mapping, no need login
         }*/
@@ -106,7 +110,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
             if (StringUtils.isNotBlank(req.getQueryString())) {
                 returnUrl += "?" + req.getQueryString();
             }
-            return redirectToLogin(req, resp, returnUrl, "请登录");
+            return redirectToLogin(req, resp, returnUrl, REDIRECT, "请登录");
         }
 
         // verify the permission for authorization
@@ -120,12 +124,12 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
                       ? "用户被锁定"
                       : null;
         if (fail != null) {
-            return response(req, resp, super.getUnauthorizedUrl(), Result.failure(UNAUTHORIZED, fail));
+            return response(req, resp, UNAUTHORIZED, fail, super.getUnauthorizedUrl());
         }
 
         // check the user has spec url permission
         if (UrlPermissionMatcher.hasNotPermission(requestURI, user.getId())) {
-            return response(req, resp, super.getUnauthorizedUrl(), Result.failure(UNAUTHORIZED));
+            return response(req, resp, UNAUTHORIZED, super.getUnauthorizedUrl());
         }
 
         // ---------------------------------------------------------authorization success
@@ -158,27 +162,42 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
      * @throws IOException
      */
     private boolean login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String jwt = WebUtils.getCookie(req, WebUtils.AUTH_COOKIE);
+        if (StringUtils.isNotBlank(jwt)) {
+            // 判断用户是否已经登录
+            try {
+                String username = jwtManager.verify(jwt).getBody().getSubject();
+                User user = userService.getByUsername(username).getData();
+                if (user != null && !user.isDeleted() && user.getStatus() == User.STATUS_ENABLE) {
+                    return response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl);
+                } else {
+                    doLogout(req, resp);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         String returnUrl = req.getParameter(Constants.RETURN_URL);
 
         if (!verifyCaptcha(req, resp)) {
-            return redirectToLogin(req, resp, returnUrl, "验证码错误");
+            return redirectToLogin(req, resp, returnUrl, BAD_REQUEST, "验证码错误");
         }
 
         String username = req.getParameter("username");
         if (StringUtils.isBlank(username)) {
-            return redirectToLogin(req, resp, returnUrl, "用户名不能为空");
+            return redirectToLogin(req, resp, returnUrl, BAD_REQUEST, "用户名不能为空");
         }
 
         String password = req.getParameter("password");
         if (StringUtils.isBlank(password)) {
-            return redirectToLogin(req, resp, returnUrl, "密码不能为空");
+            return redirectToLogin(req, resp, returnUrl, BAD_REQUEST, "密码不能为空");
         }
 
         if (passwordEncrypt) {
             try {
                 password = CommonUtils.decryptPassword(password);
             } catch (Exception ignored) {
-                return redirectToLogin(req, resp, returnUrl, "无效的密码");
+                return redirectToLogin(req, resp, returnUrl, BAD_REQUEST, "无效的密码");
             }
         }
 
@@ -194,16 +213,16 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
             if (user != null) {
                 limiter.recordAction(loginTraceKey, 120); // 防止密码枚举攻击
             }
-            return redirectToLogin(req, resp, returnUrl, "用户名或密码错误");
+            return redirectToLogin(req, resp, returnUrl, NOT_FOUND, "用户名或密码错误");
         }
 
         String fail = user.isDeleted() ? "用户已删除" : (user.getStatus() == User.STATUS_DISABLE) ? "用户被锁定" : null;
         if (fail != null) {
-            return response(req, resp, super.getLoginUrl(), Result.failure(FORBIDDEN, fail));
+            return response(req, resp, UNAUTHORIZED, fail, super.getLoginUrl());
         }
 
         // create a jwt
-        String jwt = jwtManager.create(username);
+        jwt = jwtManager.create(username);
 
         // revoke the oldness jwt
         jwtManager.revoke(WebUtils.getCookie(req, WebUtils.AUTH_COOKIE));
@@ -217,11 +236,8 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         // 重置登录失败次数
         limiter.resetAction(loginTraceKey);
 
-        String redirectUrl = null;
-        if (!WebUtils.isAjax(req)) {
-            redirectUrl = Optional.ofNullable(returnUrl).filter(StringUtils::isNotBlank).orElse(successUrl);
-        }
-        return response(req, resp, redirectUrl, Result.SUCCESS); // login success
+        String redirectUrl = Optional.ofNullable(returnUrl).filter(StringUtils::isNotBlank).orElse(successUrl);
+        return response(req, resp, OK, redirectUrl); // login success
     }
 
     /**
@@ -233,6 +249,11 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
      * @throws IOException
      */
     private boolean logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        doLogout(req, resp);
+        return response(req, resp, OK, super.getLoginUrl()); // logout success
+    }
+
+    private void doLogout(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         super.getSubject(req, resp).logout();
         if (session != null) {
@@ -240,7 +261,6 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }
         jwtManager.revoke(WebUtils.getCookie(req, WebUtils.AUTH_COOKIE));
         WebUtils.delCookie(req, resp, WebUtils.AUTH_COOKIE);
-        return response(req, resp, super.getLoginUrl(), Result.SUCCESS); // logout success
     }
 
     /**
@@ -264,50 +284,46 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
             && RedisRequestLimiter.create(jedisClient).checkCaptcha(captcid, captcha);
     }
 
+    private boolean redirectToLogin(HttpServletRequest req, HttpServletResponse resp,
+                                    String returnUrl, ResultCode code, String msg) throws IOException {
+        boolean isRootPath = StringUtils.isBlank(returnUrl) || Constants.ROOT_PATH.equals(returnUrl);
+        String redirectUrl = isRootPath ? super.getLoginUrl() : HttpParams.buildUrlPath(
+            super.getLoginUrl(), Files.UTF_8, ImmutableMap.of(Constants.RETURN_URL, returnUrl)
+        );
+        return response(req, resp, code, msg, redirectUrl);
+    }
+
+    private boolean response(HttpServletRequest req, HttpServletResponse resp,
+                             ResultCode rc, String redirectUrl) throws IOException {
+        return response(req, resp, rc, rc.getMsg(), redirectUrl);
+    }
+
     /**
-     * Response for client
+     * Responses to client
      * 
-     * @param req
-     * @param resp
-     * @param redirectUrl  the redirect url
-     * @param msg          the msg data if ajax request
-     * @return because is the final response to client so {@code return false; }
-     * @throws IOException
+     * @param req  the HttpServletRequest
+     * @param resp the HttpServletResponse
+     * @param rc   the ResultCode
+     * @param msg  the tip message
+     * @param redirectUrl the redirect url for client
+     * @return because is the final response to client, so direct {@code return false; }
+     * @throws IOException if occur IOException at response to client
      */
     private boolean response(HttpServletRequest req, HttpServletResponse resp, 
-                             String redirectUrl, Result<?> msg) throws IOException {
+                             ResultCode rc, String msg, String redirectUrl) throws IOException {
+        redirectUrl = org.apache.shiro.web.util.WebUtils.getContextPath(req) + redirectUrl;
         if (WebUtils.isAjax(req)) {
-            WebUtils.respJson(resp, msg);
+            WebUtils.respJson(resp, new Result<>(rc.getCode(), msg, redirectUrl));
         } else {
-            String url = org.apache.shiro.web.util.WebUtils.getContextPath(req) + redirectUrl;
-            if (redirectUrl.equals(successUrl) || msg.isFailure()) {
-                url = HttpParams.buildUrlPath(url, Files.UTF_8, ImmutableMap.of("msg", msg.getMsg()));
+            if (redirectUrl.equals(successUrl) || !ResultCode.isSuccessCode(rc.getCode())) {
+                redirectUrl = HttpParams.buildUrlPath(redirectUrl, Files.UTF_8, ImmutableMap.of("msg", msg));
             }
-            resp.sendRedirect(resp.encodeRedirectURL(url));
+            resp.sendRedirect(resp.encodeRedirectURL(redirectUrl));
         }
         return false;
     }
 
-    private boolean redirectToLogin(HttpServletRequest req, HttpServletResponse resp,
-                                    String returnUrl, String msg) throws IOException {
-        return redirectToLogin(req, resp, returnUrl, REDIRECT, msg);
-    }
-
-    private boolean redirectToLogin(HttpServletRequest req, HttpServletResponse resp,
-                                    String returnUrl, ResultCode code, String msg) throws IOException {
-        String toLoginUrl = super.getLoginUrl();
-        Result<String> res = Result.failure(code, msg);
-        if (!WebUtils.isAjax(req)) {
-            if (StringUtils.isNotBlank(returnUrl) && !Constants.ROOT_PATH.equals(returnUrl)) {
-                toLoginUrl = HttpParams.buildUrlPath(
-                    toLoginUrl, Files.UTF_8, ImmutableMap.of(Constants.RETURN_URL, returnUrl)
-                ); 
-                res.setData(returnUrl);
-            }
-        }
-        return response(req, resp, toLoginUrl, res);
-    }
-
+    // --------------------------------------------------------------------------------------------getter/setter
     public void setLoginAction(String loginAction) {
         this.loginAction = loginAction;
     }
