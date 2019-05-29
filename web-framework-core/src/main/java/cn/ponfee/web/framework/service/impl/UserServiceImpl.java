@@ -189,7 +189,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Result<TreeNode<String, Permit>> permitTree(long userId) {
+    public Result<TreeNode<String, Permit>> permitsTree(long userId) {
         return Result.success(Permit.buildTree(queryPermits(userId)));
     }
 

@@ -12,4 +12,6 @@ import code.ponfee.commons.model.AbstractDataConverter;
  */
 public class UserConverter extends AbstractDataConverter<User, UserDto> {
 
+    public static final UserConverter INSTANCE = new UserConverter();
+
 }

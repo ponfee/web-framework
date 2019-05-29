@@ -123,6 +123,6 @@ public interface IUserService {
      * @param userId
      * @return
      */
-    Result<TreeNode<String, Permit>> permitTree(long userId);
+    Result<TreeNode<String, Permit>> permitsTree(long userId);
 
 }

@@ -14,7 +14,7 @@ import cn.ponfee.web.framework.model.User;
  * 
  * @author Ponfee
  */
-public class WebContext {
+public class ContextHolder {
 
     private static final String CURRENT_USER = "current_user";
 

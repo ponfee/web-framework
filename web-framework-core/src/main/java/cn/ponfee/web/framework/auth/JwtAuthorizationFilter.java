@@ -28,7 +28,7 @@ import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.util.CommonUtils;
 import cn.ponfee.web.framework.util.Constants;
 import cn.ponfee.web.framework.web.CaptchaServlet;
-import cn.ponfee.web.framework.web.WebContext;
+import cn.ponfee.web.framework.web.ContextHolder;
 import code.ponfee.commons.http.HttpParams;
 import code.ponfee.commons.io.Files;
 import code.ponfee.commons.jedis.JedisClient;
@@ -144,7 +144,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
                 resp, WebUtils.AUTH_COOKIE, renewJwt, Constants.ROOT_PATH, jwtManager.getJwtExpSeconds()
             );
         }
-        WebContext.currentUser(user);
+        ContextHolder.currentUser(user);
         return true; // authorization success
     }
 

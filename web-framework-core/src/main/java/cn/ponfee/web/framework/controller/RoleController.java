@@ -5,8 +5,10 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.service.IRoleService;
-import cn.ponfee.web.framework.web.WebContext;
+import cn.ponfee.web.framework.web.ContextHolder;
 import code.ponfee.commons.math.Numbers;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.PageHandler;
@@ -34,28 +36,21 @@ public class RoleController {
 
     @PostMapping("add")
     public Result<Void> add(@RequestBody Role role) {
-        long currentUserId = WebContext.currentUser().getId();
+        long currentUserId = ContextHolder.currentUser().getId();
         role.setCreateBy(currentUserId);
         role.setUpdateBy(currentUserId);
         return service.add(role);
     }
 
-    @PostMapping("update")
+    @PutMapping("update")
     public Result<Void> update(@RequestBody Role role) {
-        role.setUpdateBy(WebContext.currentUser().getId());
+        role.setUpdateBy(ContextHolder.currentUser().getId());
         return service.update(role);
     }
 
-    @PostMapping("delete/roleid")
-    public Result<Void> delroleid(@RequestBody Map<String, Object> map) {
-        long roleId = Numbers.toWrapLong(map.get("roleId"));
+    @DeleteMapping("delete")
+    public Result<Void> delete(@RequestParam("roleId") long roleId) {
         return service.deleteById(roleId);
-    }
-
-    @PostMapping("delete/rolecode")
-    public Result<Void> delrolecode(@RequestBody Map<String, Object> map) {
-        String roleCode = (String) map.get("roleCode");
-        return service.deleteByRoleCode(roleCode);
     }
 
     @SuppressWarnings("unchecked")

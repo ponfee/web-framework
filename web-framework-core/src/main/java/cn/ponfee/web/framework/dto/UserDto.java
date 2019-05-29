@@ -13,9 +13,6 @@ public class UserDto implements java.io.Serializable {
     private String username; // 用户名
     private String nickname; // 昵称（姓名）
     private String mobilePhone; // 手机号码
-    private Long roleId;
-    private String roleCode;
-    private String roleName;
 
     public Long getId() {
         return id;
@@ -48,29 +45,4 @@ public class UserDto implements java.io.Serializable {
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
     }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getRoleCode() {
-        return roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
 }

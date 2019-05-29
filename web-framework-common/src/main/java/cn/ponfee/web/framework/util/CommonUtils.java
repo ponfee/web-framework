@@ -57,7 +57,7 @@ public class CommonUtils {
      * @return password bcrypt hashed
      */
     public static String cryptPassword(String password) {
-        // 密码sha1后再进行bcrypt
+        // sha1 before bcrypt
         return BCrypt.create(DigestUtils.sha1(password), 2);
     }
 

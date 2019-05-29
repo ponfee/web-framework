@@ -1,7 +1,5 @@
 package cn.ponfee.web.framework.enums;
 
-import cn.ponfee.web.framework.dto.UserDto;
-
 /**
  * 角色
  * 
@@ -23,12 +21,4 @@ public enum RoleEnum {
         return desc;
     }
 
-    public static RoleEnum from(UserDto u) {
-        for (RoleEnum role : RoleEnum.values()) {
-            if (role.name().equalsIgnoreCase(u.getRoleCode())) {
-                return role;
-            }
-        }
-        return GENERAL;
-    }
 }
