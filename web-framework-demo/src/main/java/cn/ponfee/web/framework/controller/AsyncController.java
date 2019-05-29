@@ -47,6 +47,7 @@ public class AsyncController {
     @RequestMapping("/test4")
     public @ResponseBody Callable<String> test4() {
         return () -> {
+            Thread.sleep(2000);
             return "test4-Callable";
         };
     }
@@ -68,10 +69,10 @@ public class AsyncController {
             }
         }.start();
 
-        deferredResult.onTimeout(()->{
+        deferredResult.onTimeout(() -> {
             deferredResult.setResult("test5-DeferredResult-timeout");
         });
-        
+
         return deferredResult;
     }
 }

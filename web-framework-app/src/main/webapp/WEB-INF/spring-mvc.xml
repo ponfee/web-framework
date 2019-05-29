@@ -136,7 +136,6 @@
     <property name="viewResolvers">
       <list>
         <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-        <!-- Freemarker 视图解析器 -->
         <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
           <property name="order" value="1" />
           <!-- <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" /> -->
@@ -201,7 +200,7 @@
   </bean>
 
 
-  <!-- 配置“/”为默认欢迎页面 -->
+  <!-- 配置“/”为默认首页 -->
   <!-- <mvc:view-controller path="/" view-name="page/dist/index.html" /> -->
 
 

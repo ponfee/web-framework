@@ -26,7 +26,9 @@ public class ExtendedFreeMarkerView extends FreeMarkerView {
     private static String getBasePath(HttpServletRequest request) {
         String path = "//" + request.getServerName();
         int port = request.getServerPort();
-        if (port != 80) path += ":" + port;
+        if (port != 80) {
+            path += ":" + port;
+        }
         return path + request.getContextPath();
     }
 }
