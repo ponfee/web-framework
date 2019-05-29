@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.Permit;
 import cn.ponfee.web.framework.service.IPermitService;
-import cn.ponfee.web.framework.util.WebContextHolder;
-
+import cn.ponfee.web.framework.web.WebContext;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.tree.FlatNode;
 import code.ponfee.commons.tree.TreeNode;
@@ -32,7 +31,7 @@ public class PermitController {
 
     @PostMapping("add")
     public Result<Void> add(@RequestBody Permit permit) {
-        long currentUserId = WebContextHolder.currentUser().getId();
+        long currentUserId = WebContext.currentUser().getId();
         permit.setCreateBy(currentUserId);
         permit.setUpdateBy(currentUserId);
         return service.add(permit);
@@ -40,7 +39,7 @@ public class PermitController {
 
     @PostMapping("update")
     public Result<Void> update(@RequestBody Permit permit) {
-        permit.setUpdateBy(WebContextHolder.currentUser().getId());
+        permit.setUpdateBy(WebContext.currentUser().getId());
         return service.update(permit);
     }
 

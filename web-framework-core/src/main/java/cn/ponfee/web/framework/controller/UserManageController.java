@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
+
 import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.model.User;
 import cn.ponfee.web.framework.service.IRoleService;
 import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.startup.SpringStartupListener;
 import cn.ponfee.web.framework.util.CommonUtils;
-import cn.ponfee.web.framework.util.WebContextHolder;
-
+import cn.ponfee.web.framework.web.WebContext;
 import code.ponfee.commons.math.Numbers;
 import code.ponfee.commons.model.AbstractDataConverter;
 import code.ponfee.commons.model.Page;
@@ -65,7 +65,7 @@ public class UserManageController {
             return Result.failure(ResultCode.BAD_REQUEST, "用户名格式错误");
         }
 
-        userDefaultProp(user, WebContextHolder.currentUser().getId());
+        userDefaultProp(user, WebContext.currentUser().getId());
         return service.save(user);
     }
 
@@ -81,7 +81,7 @@ public class UserManageController {
         }
 
         user.setRoleIds(Arrays.asList(SpringStartupListener.roleGeneral())); // XXX 默认普通角色
-        user.setUpdateBy(WebContextHolder.currentUser().getId());
+        user.setUpdateBy(WebContext.currentUser().getId());
         return service.update(user);
     }
 
@@ -89,7 +89,7 @@ public class UserManageController {
     public Result<Void> changeStatus(@RequestBody Map<String, Object> params) {
         long userId = Numbers.toLong(params.get("userId"));
         int status = Numbers.toInt(params.get("status"));
-        return service.changeStatus(userId, WebContextHolder.currentUser().getId(), status);
+        return service.changeStatus(userId, WebContext.currentUser().getId(), status);
     }
 
     @PostMapping("resetpwd")
@@ -102,13 +102,13 @@ public class UserManageController {
         User user = new User();
         user.setId(userId);
         user.setPassword(CommonUtils.cryptPassword(userName));
-        user.setUpdateBy(WebContextHolder.currentUser().getId());
+        user.setUpdateBy(WebContext.currentUser().getId());
         return service.modifyInfo(user);
     }
 
     @PostMapping("delete")
     public Result<Void> delete(@RequestBody long[] userIds) {
-        return service.logicDelete(userIds, WebContextHolder.currentUser().getId());
+        return service.logicDelete(userIds, WebContext.currentUser().getId());
     }
 
     @PostMapping("updatepwd")
@@ -127,7 +127,7 @@ public class UserManageController {
         User user = new User();
         user.setId(userId);
         user.setPassword(CommonUtils.cryptPassword(password));
-        user.setUpdateBy(WebContextHolder.currentUser().getId());
+        user.setUpdateBy(WebContext.currentUser().getId());
         return service.modifyInfo(user);
     }
 

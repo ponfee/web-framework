@@ -9,8 +9,10 @@
   <name>${project.artifactId}</name>
 
   <modules>
+  	<module>web-framework-common</module>
     <module>web-framework-core</module>
-    <module>web-framework-war</module>
+    <module>web-framework-demo</module>
+    <module>web-framework-app</module>
   </modules>
 
   <properties>

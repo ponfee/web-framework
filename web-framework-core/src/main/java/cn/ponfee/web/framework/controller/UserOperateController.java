@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.ponfee.web.framework.dto.UserDto;
 import cn.ponfee.web.framework.model.Permit;
 import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.model.User;
 import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.util.CommonUtils;
-import cn.ponfee.web.framework.util.WebContextHolder;
-
+import cn.ponfee.web.framework.web.WebContext;
 import code.ponfee.commons.model.AbstractDataConverter;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.model.ResultCode;
@@ -55,7 +53,7 @@ public class UserOperateController {
             u.setPassword(passwd(u.getPassword(), u.getOriginPassword()));
         }
 
-        long userId = WebContextHolder.currentUser().getId();
+        long userId = WebContext.currentUser().getId();
         u.setId(userId);
         u.setUpdateBy(userId);
         return userService.modifyInfo(u);
@@ -67,7 +65,7 @@ public class UserOperateController {
         if (StringUtils.isBlank(nickname)) {
             return Result.failure(ResultCode.BAD_REQUEST, "姓名不能为空");
         }
-        long userId = WebContextHolder.currentUser().getId();
+        long userId = WebContext.currentUser().getId();
         User user = new User();
         user.setId(userId);
         user.setNickname(nickname);
@@ -81,7 +79,7 @@ public class UserOperateController {
         if (StringUtils.isBlank(mobilePhone)) {
             return Result.failure(ResultCode.BAD_REQUEST, "手机号码不能为空");
         }
-        long userId = WebContextHolder.currentUser().getId();
+        long userId = WebContext.currentUser().getId();
         User user = new User();
         user.setId(userId);
         user.setMobilePhone(mobilePhone);
@@ -91,7 +89,7 @@ public class UserOperateController {
 
     @PostMapping("modify/pwd")
     public Result<Void> modifypwd(@RequestBody Map<String, Object> map) {
-        long userId = WebContextHolder.currentUser().getId();
+        long userId = WebContext.currentUser().getId();
         User user = new User();
         user.setId(userId);
         user.setPassword(passwd((String) map.get("password"), (String) map.get("originPassword")));
@@ -107,7 +105,7 @@ public class UserOperateController {
     @GetMapping("my/role")
     public Result<Role> myRole() {
         return AbstractDataConverter.convertResultBean(
-            userService.queryUserRoles(WebContextHolder.currentUser().getId()), 
+            userService.queryUserRoles(WebContext.currentUser().getId()), 
             roles -> CollectionUtils.isEmpty(roles) ? null : roles.get(0)
         );
     }
@@ -118,13 +116,13 @@ public class UserOperateController {
      * @return
      */
     @GetMapping("my/info")
-    public Result<UserDto> myInfo() {
-        return Result.success(WebContextHolder.currentUserDto());
+    public Result<User> myInfo() {
+        return Result.success(WebContext.currentUser());
     }
 
     @GetMapping("permit/tree")
     public Result<TreeNode<String, Permit>> permitTree() {
-        User user = WebContextHolder.currentUser();
+        User user = WebContext.currentUser();
         return userService.permitTree(user.getId());
     }
 
@@ -142,7 +140,7 @@ public class UserOperateController {
             throw new IllegalArgumentException("原密码不能为空");
         }
         originPassword = CommonUtils.decryptPassword(originPassword);
-        User user = WebContextHolder.currentUser();
+        User user = WebContext.currentUser();
         if (!CommonUtils.checkPassword(originPassword, user.getPassword())) {
             throw new IllegalArgumentException("原密码错误");
         }

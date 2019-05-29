@@ -27,8 +27,8 @@ import cn.ponfee.web.framework.model.User;
 import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.util.CommonUtils;
 import cn.ponfee.web.framework.util.Constants;
-import cn.ponfee.web.framework.util.WebContextHolder;
 import cn.ponfee.web.framework.web.CaptchaServlet;
+import cn.ponfee.web.framework.web.WebContext;
 import code.ponfee.commons.http.HttpParams;
 import code.ponfee.commons.io.Files;
 import code.ponfee.commons.jedis.JedisClient;
@@ -95,6 +95,10 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         HttpServletResponse resp = (HttpServletResponse) response;
         String requestURI = super.getPathWithinApplication(request);
 
+        if (StringUtils.equals(super.getLoginUrl(), requestURI)) {
+            return !checkLogined(req, resp);
+        }
+
         /*if (UrlPermissionMatcher.isNotMapping(requestURI)) {
             return true; // is spring mvc controller url mapping, no need login
         }*/
@@ -140,7 +144,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
                 resp, WebUtils.AUTH_COOKIE, renewJwt, Constants.ROOT_PATH, jwtManager.getJwtExpSeconds()
             );
         }
-        WebContextHolder.currentUser(user);
+        WebContext.currentUser(user);
         return true; // authorization success
     }
 
@@ -162,19 +166,8 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
      * @throws IOException
      */
     private boolean login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String jwt = WebUtils.getCookie(req, WebUtils.AUTH_COOKIE);
-        if (StringUtils.isNotBlank(jwt)) {
-            // 判断用户是否已经登录
-            try {
-                String username = jwtManager.verify(jwt).getBody().getSubject();
-                User user = userService.getByUsername(username).getData();
-                if (user != null && !user.isDeleted() && user.getStatus() == User.STATUS_ENABLE) {
-                    return response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl);
-                } else {
-                    doLogout(req, resp);
-                }
-            } catch (Exception ignored) {
-            }
+        if (checkLogined(req, resp)) {
+            return false;
         }
 
         String returnUrl = req.getParameter(Constants.RETURN_URL);
@@ -222,7 +215,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }
 
         // create a jwt
-        jwt = jwtManager.create(username);
+        String jwt = jwtManager.create(username);
 
         // revoke the oldness jwt
         jwtManager.revoke(WebUtils.getCookie(req, WebUtils.AUTH_COOKIE));
@@ -238,6 +231,25 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
         String redirectUrl = Optional.ofNullable(returnUrl).filter(StringUtils::isNotBlank).orElse(successUrl);
         return response(req, resp, OK, redirectUrl); // login success
+    }
+
+    private boolean checkLogined(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String jwt = WebUtils.getCookie(req, WebUtils.AUTH_COOKIE);
+        if (StringUtils.isNotBlank(jwt)) {
+            // 判断用户是否已经登录
+            try {
+                String username = jwtManager.verify(jwt).getBody().getSubject();
+                User user = userService.getByUsername(username).getData();
+                if (user != null && !user.isDeleted() && user.getStatus() == User.STATUS_ENABLE) {
+                    response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl);
+                    return true;
+                } else {
+                    doLogout(req, resp);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return false;
     }
 
     /**

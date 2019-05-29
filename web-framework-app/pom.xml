@@ -1,0 +1,172 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.ponfee</groupId>
+    <artifactId>web-framework</artifactId>
+    <version>${deploy.version}</version>
+  </parent>
+  <artifactId>web-framework-app</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>cn.ponfee</groupId>
+      <artifactId>web-framework-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.ponfee</groupId>
+      <artifactId>web-framework-demo</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <!-- Java代码混淆插件
+        http://wvengen.github.io/proguard-maven-plugin
+        https://github.com/wvengen/proguard-maven-plugin
+        https://blog.csdn.net/xiao190128/article/details/81777912
+       -->
+      <!-- <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <obfuscate>true</obfuscate>
+          <addMavenDescriptor>false</addMavenDescriptor>
+          <inFilter>!application.properties</inFilter>
+
+          <injar>classes</injar>
+          <attach>false</attach>
+          <outjar>${project.build.finalName}-proguard.jar</outjar>
+
+          <!—— <injar>${project.build.finalName}.jar</injar>
+          <attach>true</attach>
+          <attachArtifactClassifier>proguard</attachArtifactClassifier>
+          <attachArtifactType>jar</attachArtifactType> ——>
+
+          <!—— <outputDirectory>${project.build.directory}</outputDirectory> ——>
+          <outputDirectory>${project.basedir}/../web-framework-core/target</outputDirectory>
+          <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+            <lib>${java.home}/lib/jce.jar</lib>
+            <lib>${java.home}/lib/jsse.jar</lib>
+          </libs>
+          <options>
+            <option>-target ${java.version}</option>
+            <option>-ignorewarnings</option>
+            <option>-dontshrink</option>
+            <option>-dontoptimize</option>
+            <option>-dontusemixedcaseclassnames</option>
+            <option>-dontskipnonpubliclibraryclasses</option>
+            <option>-dontskipnonpubliclibraryclassmembers</option>
+            <option>-keeppackagenames</option>
+            <option>-keep class cn.ponfee.web.framework.** { *; }</option>
+            <option>-keep interface cn.ponfee.web.framework.** { *; }</option>
+            <option>-keep enum cn.ponfee.web.framework.** { *; }</option>
+            <option>-keep @interface cn.ponfee.web.framework.** { *; }</option>
+            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
+          </options>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>net.sf.proguard</groupId>
+            <artifactId>proguard-base</artifactId>
+            <version>6.1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin> -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.parent.artifactId}</finalName>
+              <skipAssembly>false</skipAssembly>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.18.v20190429</version>
+        <configuration>
+          <httpConnector>
+            <!-- -Djetty.port=8000 -->
+            <port>8000</port>
+          </httpConnector>
+          <stopKey>shutdown</stopKey>
+          <stopPort>9966</stopPort>
+          <!-- -Djetty.scanIntervalSeconds=2 -->
+          <scanIntervalSeconds>2</scanIntervalSeconds>
+          <!-- -Djetty.reload=manual -->
+          <reload>manual</reload>
+          <dumpOnStart>true</dumpOnStart>
+          <webApp>
+            <!-- contextPath 的默认值的 /，${project.artifactId} 引用了 节点的值，即项目的名称。 -->
+            <contextPath>/${project.artifactId}</contextPath>
+            <!-- <resourceBases>
+                ,项目的静态资源文件目录默认是 src/main/webapp，可以引入多个
+                <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                <resourceBase>${project.basedir}/commons</resourceBase>
+            </resourceBases> -->
+            <!-- webdefault.xml中useFileMappedBuffer设置为false -->
+            <defaultsDescriptor>${project.basedir}/webdefault.xml</defaultsDescriptor>
+          </webApp>
+          <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+            <filename>target/access-yyyy_mm_dd.log</filename>
+            <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+            <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+            <logTimeZone>GMT+8:00</logTimeZone>
+            <append>true</append>
+            <logServer>true</logServer>
+            <retainDays>120</retainDays>
+            <logCookies>true</logCookies>
+          </requestLog>
+        </configuration>
+      </plugin>
+
+    <!--<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <warSourceExcludes>page/**</warSourceExcludes>
+        </configuration>
+      </plugin>-->
+
+    </plugins>
+
+  </build>
+
+</project>

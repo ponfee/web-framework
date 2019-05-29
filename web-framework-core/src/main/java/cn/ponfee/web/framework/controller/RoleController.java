@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.service.IRoleService;
-import cn.ponfee.web.framework.util.WebContextHolder;
-
+import cn.ponfee.web.framework.web.WebContext;
 import code.ponfee.commons.math.Numbers;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.PageHandler;
@@ -35,7 +34,7 @@ public class RoleController {
 
     @PostMapping("add")
     public Result<Void> add(@RequestBody Role role) {
-        long currentUserId = WebContextHolder.currentUser().getId();
+        long currentUserId = WebContext.currentUser().getId();
         role.setCreateBy(currentUserId);
         role.setUpdateBy(currentUserId);
         return service.add(role);
@@ -43,7 +42,7 @@ public class RoleController {
 
     @PostMapping("update")
     public Result<Void> update(@RequestBody Role role) {
-        role.setUpdateBy(WebContextHolder.currentUser().getId());
+        role.setUpdateBy(WebContext.currentUser().getId());
         return service.update(role);
     }
 
