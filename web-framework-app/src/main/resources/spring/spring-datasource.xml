@@ -112,8 +112,13 @@
   <aop:config proxy-target-class="true">
     <aop:pointcut id="dbTxMgrPointcut" 
       expression="execution(public * cn.ponfee.web.framework.service.impl..*..*(..))" />
+
     <aop:advisor advice-ref="dsChangeAdvice" pointcut-ref="dbTxMgrPointcut" order="1" />
     <aop:advisor advice-ref="txManageAdvice" pointcut-ref="dbTxMgrPointcut" order="2" />
+
+    <!-- <aop:aspect ref="dsChangeAdvice" order="1">
+      <aop:around method="doAround" pointcut-ref="dbTxMgrPointcut" />
+    </aop:aspect> -->
   </aop:config>
 
 </beans>
