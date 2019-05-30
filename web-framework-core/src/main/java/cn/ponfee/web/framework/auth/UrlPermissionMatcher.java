@@ -139,7 +139,7 @@ public final class UrlPermissionMatcher {
         if (permits == null) {
             synchronized (UrlPermissionMatcher.class) {
                 if ((permits = permissions) == null) {
-                    List<FlatNode<String, Permit>> list = getBean(IPermitService.class).permitsFlat().getData();
+                    List<FlatNode<String, Permit>> list = getBean(IPermitService.class).flatsAll().getData();
                     permissions = permits = 
                     CollectionUtils.isEmpty(list) 
                     ? Collections.emptyMap() 

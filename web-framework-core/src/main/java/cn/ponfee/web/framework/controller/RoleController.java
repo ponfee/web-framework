@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.service.IRoleService;
-import cn.ponfee.web.framework.web.ContextHolder;
+import cn.ponfee.web.framework.web.AppContext;
 import code.ponfee.commons.math.Numbers;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.PageHandler;
@@ -32,25 +32,25 @@ import code.ponfee.commons.model.Result;
 @RequestMapping("role")
 public class RoleController {
 
-    private @Resource IRoleService service;
+    private @Resource IRoleService roleService;
 
     @PostMapping("add")
     public Result<Void> add(@RequestBody Role role) {
-        long currentUserId = ContextHolder.currentUser().getId();
+        long currentUserId = AppContext.currentUser().getId();
         role.setCreateBy(currentUserId);
         role.setUpdateBy(currentUserId);
-        return service.add(role);
+        return roleService.add(role);
     }
 
     @PutMapping("update")
     public Result<Void> update(@RequestBody Role role) {
-        role.setUpdateBy(ContextHolder.currentUser().getId());
-        return service.update(role);
+        role.setUpdateBy(AppContext.currentUser().getId());
+        return roleService.update(role);
     }
 
     @DeleteMapping("delete")
     public Result<Void> delete(@RequestParam("roleId") long roleId) {
-        return service.deleteById(roleId);
+        return roleService.deleteById(roleId);
     }
 
     @SuppressWarnings("unchecked")
@@ -58,31 +58,31 @@ public class RoleController {
     public Result<Void> updatepermits(@RequestBody Map<String, Object> params) {
         long roleId = Numbers.toLong(params.get("roleId"));
         List<String> permitIds = (List<String>) params.get("permitIds");
-        return service.updatePermits(roleId, permitIds);
+        return roleService.updatePermits(roleId, permitIds);
     }
 
     @GetMapping("permits")
     public Result<List<String>> permits(@RequestParam("roleId") long roleId) {
-        return service.queryRolePermits(roleId);
+        return roleService.queryRolePermits(roleId);
     }
 
     @GetMapping("get/roleid")
     public Result<Role> get(@RequestParam("roleId") long roleId) {
-        return service.getById(roleId);
+        return roleService.getById(roleId);
     }
 
     @GetMapping("get/rolecode")
     public Result<Role> get(@RequestParam("roleCode") String roleCode) {
-        return service.getByRoleCode(roleCode);
+        return roleService.getByRoleCode(roleCode);
     }
 
     @GetMapping("query4page")
     public Result<Page<Role>> query4page(PageRequestParams params) {
-        return service.query4page(params.getParams());
+        return roleService.query4page(params.getParams());
     }
 
     @GetMapping("listall")
     public Result<List<Role>> listAll() {
-        return Result.success(service.query4page(PageHandler.QUERY_ALL_PARAMS).getData().getRows());
+        return Result.success(roleService.query4page(PageHandler.QUERY_ALL_PARAMS).getData().getRows());
     }
 }

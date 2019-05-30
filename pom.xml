@@ -11,6 +11,8 @@
   <modules>
   	<module>web-framework-common</module>
     <module>web-framework-core</module>
+    <module>web-framework-data</module>
+    <module>web-framework-console</module>
     <module>web-framework-demo</module>
     <module>web-framework-app</module>
   </modules>

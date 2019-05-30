@@ -22,7 +22,7 @@ import cn.ponfee.web.framework.service.IRoleService;
 import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.startup.SpringStartupListener;
 import cn.ponfee.web.framework.util.CommonUtils;
-import cn.ponfee.web.framework.web.ContextHolder;
+import cn.ponfee.web.framework.web.AppContext;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.PageRequestParams;
 import code.ponfee.commons.model.Result;
@@ -52,7 +52,7 @@ public class UserManageController {
             return Result.failure(ResultCode.BAD_REQUEST, "用户名格式错误");
         }
 
-        userDefaultProp(user, ContextHolder.currentUser().getId());
+        userDefaultProp(user, AppContext.currentUser().getId());
         return userService.save(user);
     }
 
@@ -68,13 +68,13 @@ public class UserManageController {
         }
 
         user.setRoleIds(Arrays.asList(SpringStartupListener.roleGeneral())); // XXX 默认普通角色
-        user.setUpdateBy(ContextHolder.currentUser().getId());
+        user.setUpdateBy(AppContext.currentUser().getId());
         return userService.update(user);
     }
 
     @DeleteMapping("delete")
     public Result<Void> delete(@RequestParam("userIds") long[] userIds) {
-        return userService.logicDelete(userIds, ContextHolder.currentUser().getId());
+        return userService.logicDelete(userIds, AppContext.currentUser().getId());
     }
 
     @GetMapping("query/page")
@@ -85,7 +85,7 @@ public class UserManageController {
     @PutMapping("change/status")
     public Result<Void> changeStatus(@RequestParam("userId") long userId, 
                                      @RequestParam("status") int status) {
-        return userService.changeStatus(userId, ContextHolder.currentUser().getId(), status);
+        return userService.changeStatus(userId, AppContext.currentUser().getId(), status);
     }
 
     @PutMapping("update/passwd")
@@ -103,7 +103,7 @@ public class UserManageController {
         User user = new User();
         user.setId(userId);
         user.setPassword(CommonUtils.cryptPassword(password));
-        user.setUpdateBy(ContextHolder.currentUser().getId());
+        user.setUpdateBy(AppContext.currentUser().getId());
         return userService.modifyInfo(user);
     }
 

@@ -16,7 +16,7 @@ import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.model.User;
 import cn.ponfee.web.framework.service.IUserService;
 import cn.ponfee.web.framework.util.CommonUtils;
-import cn.ponfee.web.framework.web.ContextHolder;
+import cn.ponfee.web.framework.web.AppContext;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.model.ResultCode;
 import code.ponfee.commons.tree.TreeNode;
@@ -51,7 +51,7 @@ public class UserOperateController {
             u.setPassword(passwd(u.getPassword(), u.getOriginPassword()));
         }
 
-        long userId = ContextHolder.currentUser().getId();
+        long userId = AppContext.currentUser().getId();
         u.setId(userId);
         u.setUpdateBy(userId);
         return userService.modifyInfo(u);
@@ -64,7 +64,7 @@ public class UserOperateController {
      */
     @GetMapping("my/roles")
     public Result<List<Role>> myRoles() {
-        return userService.queryUserRoles(ContextHolder.currentUser().getId());
+        return userService.queryUserRoles(AppContext.currentUser().getId());
     }
 
     /**
@@ -74,12 +74,12 @@ public class UserOperateController {
      */
     @GetMapping("my/info")
     public Result<User> myInfo() {
-        return Result.success(ContextHolder.currentUser());
+        return Result.success(AppContext.currentUser());
     }
 
     @GetMapping("permits/tree")
     public Result<TreeNode<String, Permit>> permitsTree() {
-        User user = ContextHolder.currentUser();
+        User user = AppContext.currentUser();
         return userService.permitsTree(user.getId());
     }
 
@@ -97,11 +97,12 @@ public class UserOperateController {
             throw new IllegalArgumentException("原密码不能为空");
         }
         originPassword = CommonUtils.decryptPassword(originPassword);
-        User user = ContextHolder.currentUser();
+        User user = AppContext.currentUser();
         if (!CommonUtils.checkPassword(originPassword, user.getPassword())) {
             throw new IllegalArgumentException("原密码错误");
         }
 
         return CommonUtils.cryptPassword(password);
     }
+
 }

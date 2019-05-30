@@ -56,12 +56,12 @@ public class PermitServiceTest extends BaseTest<IPermitService> {
 
     @Test
     public void permitsTree() {
-        print(getBean().permitsTree());
+        print(getBean().treeAll());
     }
 
     @Test
     public void permitsFlat() {
-        print(getBean().permitsFlat());
+        print(getBean().flatsAll());
     }
 
     private static Permit create(String permitId, String parentId, 

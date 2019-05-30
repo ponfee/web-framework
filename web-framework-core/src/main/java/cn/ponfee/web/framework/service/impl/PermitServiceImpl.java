@@ -69,7 +69,7 @@ public class PermitServiceImpl implements IPermitService {
     }
 
     @Override
-    public Result<TreeNode<String, Permit>> permitsTree() {
+    public Result<TreeNode<String, Permit>> treeAll() {
         List<Permit> permits = permitDao.queryAll();
         TreeNode<String, Permit> root = CollectionUtils.isEmpty(permits) 
                                       ? TreeNode.createRoot(TreeNode.DEFAULT_ROOT_ID) 
@@ -78,7 +78,7 @@ public class PermitServiceImpl implements IPermitService {
     }
 
     @Override
-    public Result<List<FlatNode<String, Permit>>> permitsFlat() {
+    public Result<List<FlatNode<String, Permit>>> flatsAll() {
         List<Permit> permits = permitDao.queryAll();
         List<FlatNode<String, Permit>> nodes = CollectionUtils.isEmpty(permits) 
                                              ? Collections.emptyList() 

@@ -14,12 +14,11 @@ import cn.ponfee.web.framework.model.User;
  * 
  * @author Ponfee
  */
-public class ContextHolder {
+public class AppContext {
 
     private static final String CURRENT_USER = "current_user";
 
     public static void currentUser(User user) {
-        // TODO this place can prehandle the request user info
         getRequest().setAttribute(CURRENT_USER, user.mask());
     }
 

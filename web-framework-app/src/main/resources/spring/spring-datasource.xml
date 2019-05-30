@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:c="http://www.springframework.org/schema/c"
   xmlns:p="http://www.springframework.org/schema/p" 
   xmlns:aop="http://www.springframework.org/schema/aop" 
   xmlns:tx="http://www.springframework.org/schema/tx"
@@ -13,43 +14,65 @@
   <bean id="defaultDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
     init-method="init" destroy-method="close">
     <property name="driverClassName" value="${jdbc.driver.classname}" />
-    <!-- 连接池启动时的初始值 -->
     <property name="initialSize" value="3" />
-    <!-- 连接池的最大值 -->
-    <property name="maxActive" value="100" />
-    <!-- 最小空闲值.当空闲的连接数少于阀值时，连接池就会预申请去一些连接，以免洪峰来时来不及申请 -->
+    <property name="maxActive" value="50" />
     <property name="minIdle" value="3" />
-    <!-- 连接池中连接用完时,新的请求等待时间,毫秒 -->
     <property name="maxWait" value="2000" />
-    <!-- 给出一条简单的sql语句进行验证 -->
     <property name="validationQuery" value="select 1" />
-    <!-- 在取出连接时进行有效验证 -->
     <property name="testOnBorrow" value="true" />
-    <!-- 连接池收回空闲的活动连接时是否打印消息-->
     <property name="removeAbandonedTimeout" value="120" />
     <property name="logAbandoned" value="true" />
-    <!-- 运行判断连接超时任务的时间间隔，单位为毫秒，默认为-1，即不执行任务。 -->
     <property name="timeBetweenEvictionRunsMillis" value="58000" />
-    <!-- 连接的超时时间，默认为半小时。 -->
     <property name="minEvictableIdleTimeMillis" value="60000" />
-    <!-- druid 连接池的专有属性 -->
     <property name="filters" value="config" />
-    <property name="url" value="${jdbc.url}" />
-    <property name="username" value="${jdbc.username}" />
-    <property name="password" value="${jdbc.password}" />
+    <property name="url" value="${default.jdbc.url}" />
+    <property name="username" value="${default.jdbc.username}" />
+    <property name="password" value="${default.jdbc.password}" />
+  </bean>
+
+  <bean id="secondaryDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
+    init-method="init" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driver.classname}" />
+    <property name="maxActive" value="50" />
+    <property name="minIdle" value="3" />
+    <property name="maxWait" value="2000" />
+    <property name="url" value="${secondary.jdbc.url}" />
+    <property name="username" value="${secondary.jdbc.username}" />
+    <property name="password" value="${secondary.jdbc.password}" />
+  </bean>
+
+  <!-- =====================================数据源===================================== -->
+  <bean name="dataSource" class="code.ponfee.commons.data.MultipleDataSource">
+    <constructor-arg>
+      <array>
+        <!-- 如果字节码没有debug信息的编译（javac -g:none） -->
+        <!-- <bean class="code.ponfee.commons.data.NamedDataSource" 
+          c:name="default" c:dataSource-ref="defaultDataSource" /> -->
+        <bean class="code.ponfee.commons.data.NamedDataSource" 
+          c:_0="default" c:_1-ref="defaultDataSource" />
+        <bean class="code.ponfee.commons.data.NamedDataSource" 
+          c:_0="secondary" c:_1-ref="secondaryDataSource" />
+      </array>
+    </constructor-arg>
   </bean>
 
   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-    <property name="dataSource" ref="defaultDataSource"></property>
+    <property name="dataSource" ref="dataSource" />
   </bean>
 
   <!-- mybatis文件配置，扫描所有mapper xml文件 -->
   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" 
-    p:dataSource-ref="defaultDataSource" 
+    p:dataSource-ref="dataSource" 
     p:configLocation="classpath:/mybatis-conf.xml" 
     p:mapperLocations="classpath*:cn/ponfee/web/framework/dao/xml/*.xml" 
     p:typeAliasesPackage="cn.ponfee.web.framework.model" />
 
+  <!-- sqlMapper -->
+  <bean class="code.ponfee.commons.mybatis.SqlMapper">
+    <constructor-arg>
+      <bean class="org.mybatis.spring.SqlSessionTemplate" c:_0-ref="sqlSessionFactory" />
+    </constructor-arg>
+  </bean>
 
   <!-- spring与mybatis整合配置，扫描所有mapper class -->
   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="cn.ponfee.web.framework.dao.mapper"
@@ -65,7 +88,7 @@
 
   <!-- 数据库事务配置-->
   <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" 
-    p:dataSource-ref="defaultDataSource" />
+    p:dataSource-ref="dataSource" />
 
   <tx:advice id="txAdvice" transaction-manager="txManager">
     <tx:attributes>

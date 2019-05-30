@@ -53,13 +53,13 @@ public interface IPermitService {
      * 
      * @return
      */
-    Result<TreeNode<String, Permit>> permitsTree();
+    Result<TreeNode<String, Permit>> treeAll();
 
     /**
      * 查询所有权限列表并扁平展示
      * 
      * @return
      */
-    Result<List<FlatNode<String, Permit>>> permitsFlat();
+    Result<List<FlatNode<String, Permit>>> flatsAll();
 
 }

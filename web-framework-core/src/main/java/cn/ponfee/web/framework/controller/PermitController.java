@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.Permit;
 import cn.ponfee.web.framework.service.IPermitService;
-import cn.ponfee.web.framework.web.ContextHolder;
+import cn.ponfee.web.framework.web.AppContext;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.tree.FlatNode;
 import code.ponfee.commons.tree.TreeNode;
@@ -33,7 +33,7 @@ public class PermitController {
 
     @PostMapping("add")
     public Result<Void> add(@RequestBody Permit permit) {
-        long currentUserId = ContextHolder.currentUser().getId();
+        long currentUserId = AppContext.currentUser().getId();
         permit.setCreateBy(currentUserId);
         permit.setUpdateBy(currentUserId);
         return service.add(permit);
@@ -41,7 +41,7 @@ public class PermitController {
 
     @PutMapping("update")
     public Result<Void> update(@RequestBody Permit permit) {
-        permit.setUpdateBy(ContextHolder.currentUser().getId());
+        permit.setUpdateBy(AppContext.currentUser().getId());
         return service.update(permit);
     }
 
@@ -55,13 +55,14 @@ public class PermitController {
         return service.get(permitId);
     }
 
-    @GetMapping("list/tree")
-    public Result<TreeNode<String, Permit>> permitsTree() {
-        return service.permitsTree();
+    @GetMapping("tree/all")
+    public Result<TreeNode<String, Permit>> treeAll() {
+        return service.treeAll();
     }
 
-    @GetMapping("list/flat")
-    public Result<List<FlatNode<String, Permit>>> permitsFlat() {
-        return service.permitsFlat();
+    @GetMapping("flats/all")
+    public Result<List<FlatNode<String, Permit>>> flatsAll() {
+        return service.flatsAll();
     }
+
 }

@@ -32,9 +32,8 @@ public class SecurityFilter implements Filter {
 
     // sql关键字
     private static final String[] INJ_STRS = {
-        " ' ", " and ", "exec ", "insert ", "select ", "delete ", "update ", " count ",
-        " chr ", " * ", " % ", " mid ", " master ", "truncate ", " char ", "declare ",
-        " ; ", " or ", " - ", " + ", " , "
+        //"select ", " and ", " or ", " count ", " * ", " % ", " ; ", " , ", " ' ", " chr ", " char ", 
+        "exec ", "insert ", "delete ", "update ", " mid ", " master ", "truncate ", "declare ", " - ", " + "
     };
 
     // 需要拦截的JS字符关键字

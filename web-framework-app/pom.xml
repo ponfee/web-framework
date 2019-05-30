@@ -19,6 +19,16 @@
     </dependency>
     <dependency>
       <groupId>cn.ponfee</groupId>
+      <artifactId>web-framework-data</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.ponfee</groupId>
+      <artifactId>web-framework-console</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.ponfee</groupId>
       <artifactId>web-framework-demo</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
