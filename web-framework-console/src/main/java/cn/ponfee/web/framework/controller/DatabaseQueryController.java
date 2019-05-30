@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.base.Throwables;
+
 import cn.ponfee.web.framework.service.DatabaseQueryService;
 import code.ponfee.commons.collect.Collects;
 import code.ponfee.commons.data.MultipleDataSourceContext;
@@ -61,9 +63,9 @@ public class DatabaseQueryController {
         String errorMsg = null;
         try {
             page = service.query4page(params);
-        } catch (Exception e) {
+        } catch (Throwable t) {
             page = Page.empty();
-            errorMsg = e.getMessage();
+            errorMsg = Throwables.getRootCause(t).getMessage(); // Throwables.getStackTraceAsString(t);
         }
         Stream<String> head = CollectionUtils.isEmpty(page.getRows()) 
                             ? Arrays.stream(new String[] { "无查询结果" })

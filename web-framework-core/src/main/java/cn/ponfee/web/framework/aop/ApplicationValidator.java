@@ -5,6 +5,7 @@ import code.ponfee.commons.constrain.MethodValidator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Ponfee
  */
 @Component
+@Order(1) // order越小越是最先执行
 @Aspect
 public class ApplicationValidator extends MethodValidator {
 

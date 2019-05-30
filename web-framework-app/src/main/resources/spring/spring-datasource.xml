@@ -14,9 +14,9 @@
   <bean id="defaultDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
     init-method="init" destroy-method="close">
     <property name="driverClassName" value="${jdbc.driver.classname}" />
-    <property name="initialSize" value="3" />
+    <property name="initialSize" value="1" />
     <property name="maxActive" value="50" />
-    <property name="minIdle" value="3" />
+    <property name="minIdle" value="1" />
     <property name="maxWait" value="2000" />
     <property name="validationQuery" value="select 1" />
     <property name="testOnBorrow" value="true" />
@@ -33,16 +33,19 @@
   <bean id="secondaryDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
     init-method="init" destroy-method="close">
     <property name="driverClassName" value="${jdbc.driver.classname}" />
+    <property name="initialSize" value="1" />
     <property name="maxActive" value="50" />
-    <property name="minIdle" value="3" />
+    <property name="minIdle" value="1" />
     <property name="maxWait" value="2000" />
+    <property name="validationQuery" value="select 1" />
+    <property name="filters" value="config" />
     <property name="url" value="${secondary.jdbc.url}" />
     <property name="username" value="${secondary.jdbc.username}" />
     <property name="password" value="${secondary.jdbc.password}" />
   </bean>
 
   <!-- =====================================数据源===================================== -->
-  <bean name="dataSource" class="code.ponfee.commons.data.MultipleDataSource">
+  <bean id="dataSource" class="code.ponfee.commons.data.MultipleDataSource">
     <constructor-arg>
       <array>
         <!-- 如果字节码没有debug信息的编译（javac -g:none） -->
@@ -75,22 +78,20 @@
   </bean>
 
   <!-- spring与mybatis整合配置，扫描所有mapper class -->
-  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="cn.ponfee.web.framework.dao.mapper"
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" 
+    p:basePackage="cn.ponfee.web.framework.dao.mapper"
     p:sqlSessionFactoryBeanName="sqlSessionFactory" />
 
 
-  <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-    <property name="transactionManager">
-      <ref bean="txManager" />
-    </property>
-  </bean>
+  <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate"
+        p:transactionManager-ref="txManager" />
 
 
   <!-- 数据库事务配置-->
   <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" 
     p:dataSource-ref="dataSource" />
 
-  <tx:advice id="txAdvice" transaction-manager="txManager">
+  <tx:advice id="txManageAdvice" transaction-manager="txManager">
     <tx:attributes>
       <tx:method name="query*" read-only="true" />
       <tx:method name="list*" read-only="true" />
@@ -105,9 +106,14 @@
       <tx:method name="*" propagation="REQUIRED" rollback-for="Exception" />
     </tx:attributes>
   </tx:advice>
-  <aop:config>
-    <aop:pointcut id="pointcut" expression="execution(public * cn.ponfee.web.framework.service.impl..*..*(..))" />
-    <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+
+  <bean id="dsChangeAdvice" class="code.ponfee.commons.data.MultipleDataSourceChanger" />
+
+  <aop:config proxy-target-class="true">
+    <aop:pointcut id="dbTxMgrPointcut" 
+      expression="execution(public * cn.ponfee.web.framework.service.impl..*..*(..))" />
+    <aop:advisor advice-ref="dsChangeAdvice" pointcut-ref="dbTxMgrPointcut" order="1" />
+    <aop:advisor advice-ref="txManageAdvice" pointcut-ref="dbTxMgrPointcut" order="2" />
   </aop:config>
 
 </beans>

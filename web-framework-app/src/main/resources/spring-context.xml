@@ -18,7 +18,8 @@
   <!-- <task:scheduler id="taskScheduler" pool-size="5" />
   <task:annotation-driven executor="taskExecutor" scheduler="taskScheduler" /> -->
 
-  <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true" />
+  <!-- 开启@Aspect注解支持 -->
+  <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="false" />
 
   <!-- 设置使用注解的类所在的包 -->
   <context:component-scan base-package="cn.ponfee.web.framework">

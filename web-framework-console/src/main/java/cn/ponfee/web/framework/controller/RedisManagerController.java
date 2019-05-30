@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.RedisKey;
-import cn.ponfee.web.framework.service.impl.RedisManagerServiceImpl;
+import cn.ponfee.web.framework.service.RedisManagerService;
 import cn.ponfee.web.framework.service.impl.RedisManagerServiceImpl.MatchMode;
 import code.ponfee.commons.collect.Collects;
 import code.ponfee.commons.export.HtmlExporter;
@@ -57,7 +57,7 @@ public class RedisManagerController {
 
     private static final List<String> EXPIRES = Arrays.asList("ALL", "INFINITY");
 
-    private @Resource RedisManagerServiceImpl service;
+    private @Resource RedisManagerService service;
 
     @GetMapping("page")
     public Result<Page<RedisKey>> query4page(PageRequestParams params) {
