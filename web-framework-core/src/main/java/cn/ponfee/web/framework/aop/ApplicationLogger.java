@@ -15,7 +15,7 @@ import code.ponfee.commons.log.LogRecorder;
  * @author Ponfee
  */
 @Component
-@Order(9) // order越小越是最先执行
+@Order(9)
 @Aspect
 public class ApplicationLogger extends LogRecorder /*implements Ordered*/ {
 

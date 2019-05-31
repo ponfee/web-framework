@@ -2,7 +2,6 @@ package cn.ponfee.web.framework.auth;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,7 +29,17 @@ import io.jsonwebtoken.SignatureException;
 
 /**
  * https://github.com/jwtk/jjwt
- *
+ * <pre>
+ *   iss -- token的发行者
+ *   sub -- 该JWT所面向的用户
+ *   aud -- 接收该JWT的一方
+ *   exp -- token的失效时间
+ *   nbf -- 在此时间段之前,不会被处理
+ *   iat -- jwt发布时间
+ *   jti -- jwt唯一标识,防止重复使用
+ *   rfh -- 刷新时间
+ * </pre>
+ * 
  * @author Ponfee
  */
 @Component("jwtManager")
@@ -163,7 +172,7 @@ public class JwtManager {
         if (jwt == null || (index = jwt.indexOf(JwtParser.SEPARATOR_CHAR)) == -1) {
             throw new InvalidJwtException("Invalid jwt.");
         }
-        byte[] headerBytes = Base64.getUrlDecoder().decode(jwt.substring(0, index));
+        byte[] headerBytes = Base64UrlSafe.decode(jwt.substring(0, index));
         Map<String, Object> header = Jsons.fromJson(headerBytes, TypeReferences.MAP_NORMAL);
         byte[] jti = Base64UrlSafe.decode((String) header.get(CLAIM_JTI));
         if (jti == null || jti.length == 0) {

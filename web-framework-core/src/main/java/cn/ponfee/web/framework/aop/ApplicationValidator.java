@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Ponfee
  */
 @Component
-@Order(1) // order越小越是最先执行
+@Order(1) // order越小执行优先级越高
 @Aspect
 public class ApplicationValidator extends MethodValidator {
 

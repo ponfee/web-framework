@@ -41,7 +41,7 @@ import code.ponfee.commons.web.WebUtils;
  * 
  * @author Ponfee
  */
-@RequestMapping("db/query")
+@RequestMapping("database/query")
 @RestController
 public class DatabaseQueryController {
 
@@ -85,7 +85,7 @@ public class DatabaseQueryController {
         try (HtmlExporter exporter = new HtmlExporter()) {
             exporter.build(table);
             PaginationHtmlBuilder builder = PaginationHtmlBuilder.newBuilder(
-                "Database Query", contextPath + "/db/query/view", page
+                "Database Query", contextPath + "/database/query/view", page
             );
             builder.table(exporter.body())
                    .scripts(PaginationHtmlBuilder.CDN_JQUERY)
