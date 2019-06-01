@@ -24,6 +24,7 @@ public class MutipleDataSourceTest extends BaseTest<MultipletRoutingDataSource> 
 
     private @Resource SqlMapper sqlMapper;
     
+    @SuppressWarnings("unchecked")
     @Test
     public void test() {
         String sql = "select table_name from INFORMATION_SCHEMA.TABLES";

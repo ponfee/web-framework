@@ -100,7 +100,7 @@ public class DatabaseQueryController {
     private String buildForm(PageRequestParams params) {
         StringBuilder builder = new StringBuilder(2048)
             .append("<select name=\"datasource\">\n");
-        for (String datasource : MultipleDataSourceContext.getDataSourceKeys()) {
+        for (String datasource : MultipleDataSourceContext.listDataSourceNames()) {
             builder.append("<option value=\"").append(datasource).append("\"")
                    .append(datasource(params.getString("datasource"), datasource))
                    .append(">").append(datasource).append("</option>\n");
