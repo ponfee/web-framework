@@ -30,7 +30,7 @@ public class SecurityFilter implements Filter {
     private static final String INVALID_PARAM = "invalid_param"; // 无效参数放入request attribute
     //private static final String SESSIONID = "jsessionid"; // 会话跟踪id
 
-    // sql关键字
+    // sql关键字，replaceAll("('.+--)|(--)|(%7C)", "")
     private static final String[] INJ_STRS = {
         //"select ", " and ", " or ", " count ", " * ", " % ", " ; ", " , ", " ' ", " chr ", " char ", 
         "exec ", "insert ", "delete ", "update ", " mid ", " master ", "truncate ", "declare ", " - ", " + "

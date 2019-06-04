@@ -11,8 +11,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.github.pagehelper.PageHelper;
 
 import cn.ponfee.web.framework.BaseTest;
-import code.ponfee.commons.data.MultipleDataSourceContext;
-import code.ponfee.commons.data.MultipletRoutingDataSource;
+import code.ponfee.commons.data.lookup.MultipleDataSourceContext;
+import code.ponfee.commons.data.lookup.MultipletScalableDataSource;
 import code.ponfee.commons.mybatis.SqlMapper;
 
 /**
@@ -20,7 +20,7 @@ import code.ponfee.commons.mybatis.SqlMapper;
  *
  * @author Ponfee
  */
-public class MutipleDataSourceTest extends BaseTest<MultipletRoutingDataSource> {
+public class MutipleDataSourceTest extends BaseTest<MultipletScalableDataSource> {
 
     private @Resource SqlMapper sqlMapper;
     
@@ -37,13 +37,13 @@ public class MutipleDataSourceTest extends BaseTest<MultipletRoutingDataSource> 
         System.out.println("\n======================================");
         DruidDataSource datasource = new DruidDataSource();
         datasource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        datasource.setUrl("jdbc:mysql://10.202.4.26:3307/ddtmain?useUnicode=true&autoReconnect=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true");
+        datasource.setUrl("");
         datasource.setUsername("");
         datasource.setPassword("");
 
         PageHelper.startPage(50, 10);
-        MultipletRoutingDataSource mrds = getBean();
-        mrds.addDataSource("test", datasource);
+        MultipletScalableDataSource mrds = getBean();
+        mrds.add("test", datasource);
         MultipleDataSourceContext.set("test");
         list = sqlMapper.selectList(sql, LinkedHashMap.class);
         ((List<LinkedHashMap<String, Object>>) list).stream().forEach(map -> {

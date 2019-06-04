@@ -45,7 +45,7 @@
   </bean>
 
   <!-- =====================================数据源===================================== -->
-  <bean id="dataSource" class="code.ponfee.commons.data.MultipletRoutingDataSource">
+  <bean id="dataSource" class="code.ponfee.commons.data.lookup.MultipletScalableDataSource">
     <constructor-arg>
       <array>
         <!-- 如果字节码没有debug信息的编译（javac -g:none） -->
