@@ -1,9 +1,15 @@
 package cn.ponfee.web.framework.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import cn.ponfee.web.framework.BaseTest;
 import cn.ponfee.web.framework.model.Permit;
+import code.ponfee.commons.collect.Collects;
+import code.ponfee.commons.tree.FlatNode;
 
 /**
  * Permit Service Test
@@ -61,7 +67,26 @@ public class PermitServiceTest extends BaseTest<IPermitService> {
 
     @Test
     public void permitsFlat() {
-        print(getBean().flatsAll());
+        List<FlatNode<String, Permit>> list = getBean().flatsAll().getData();
+        List<Map<String, Object>> res = list.stream().map(x -> {
+          return Collects.toMap(
+            "nid", x.getNid(),
+            "pid", x.getPid(),
+            "orders", x.getOrders(),
+            "enabled", x.isEnabled(),
+            "available", x.isAvailable(),
+            "path", String.join(",",x.getPath()),
+            "level", x.getLevel(),
+            "leaf", x.isLeaf(),
+            "childLeafCount", x.getChildLeafCount(),
+            "leftLeafCount", x.getLeftLeafCount(),
+            "treeNodeCount", x.getTreeNodeCount(),
+            "treeMaxDepth", x.getTreeMaxDepth(),
+            "name", x.getAttach()==null? null:x.getAttach().getPermitName(),
+            "type", x.getAttach()==null? null:x.getAttach().getPermitType()
+          );
+        }).collect(Collectors.toList());
+        print(res);
     }
 
     private static Permit create(String permitId, String parentId, 

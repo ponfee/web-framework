@@ -130,32 +130,18 @@
   </servlet-mapping>
 
 
-  <!-- 异常、错误处理servlet -->
-  <servlet>
-    <servlet-name>globalExceptionHandler</servlet-name>
-    <servlet-class>cn.ponfee.web.framework.web.GlobalExceptionHandler</servlet-class>
-    <init-param>
-      <param-name>handlerType</param-name>
-      <param-value>application/json</param-value>
-    </init-param>
-    <async-supported>true</async-supported>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>globalExceptionHandler</servlet-name>
-    <url-pattern>/globalExceptionHandler</url-pattern>
-  </servlet-mapping>
   <error-page>
     <error-code>403</error-code>
-    <location>/globalExceptionHandler</location>
-  </error-page>
-  <!-- <error-page>
-    <error-code>404</error-code>
-    <location>/globalExceptionHandler</location>
+    <location>/page/404.html</location>
   </error-page>
   <error-page>
-    <exception-type>java.lang.Throwable</exception-type>
-    <location>/globalExceptionHandler</location>
-  </error-page> -->
+    <error-code>404</error-code>
+    <location>/page/404.html</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/page/500.html</location>
+  </error-page>
 
 
     <!-- session配置 -->

@@ -56,6 +56,8 @@
     <property name="filterChainDefinitions">
       <value>
         /page/unauthorized.html=anon
+        /page/404.html=anon
+        /page/500.html=anon
         /page/static/**=anon
         /page/favicon.ico=anon
         /captcha.json=anon
