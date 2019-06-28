@@ -30,7 +30,8 @@
 
 
   <import resource="classpath:spring/spring-datasource.xml" />
-  <import resource="classpath:spring/spring-jedis.xml" />
+  <import resource="classpath:spring/spring-redis-sentinel.xml" />
+  <!-- <import resource="classpath:spring/spring-redis-standalone.xml" /> -->
   <import resource="classpath:spring/spring-shiro.xml" />
 
   <!-- spring bean工具类 -->

@@ -37,7 +37,7 @@ public final class UrlPermissionMatcher {
     /** The system of permission urls of t_permit */
     private volatile static Map<String, FlatNode<String, Permit>> permissions;
 
-    /** Spring mapping urls of annotation RequestMapping */
+    /** Spring mvc url mappings of annotation RequestMapping */
     private static List<String> mappings;
 
     public static boolean hasNotPermission(String url, long userId) {
@@ -101,6 +101,13 @@ public final class UrlPermissionMatcher {
 
     public static boolean isNotMapping(String url) {
         return !isMapping(url);
+    }
+
+    /**
+     * Clears the permissions when changed
+     */
+    public static void clearPermissions() {
+        permissions = null;
     }
 
     /**

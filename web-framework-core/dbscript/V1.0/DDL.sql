@@ -56,6 +56,29 @@ CREATE TABLE IF NOT EXISTS `t_permit` (
   KEY `idx_updatetm` (`update_tm`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
 
+/*DROP TABLE IF EXISTS `t_resource`;
+CREATE TABLE IF NOT EXISTS `t_resource` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `rcode` varchar(50) NOT NULL COMMENT '资源编号，英文数字下划线组成',
+  `pcode` varchar(50) DEFAULT NULL COMMENT '父资源编号：没有父资源时为空',
+  `name` varchar(255) DEFAULT NULL COMMENT '资源名称',
+  `icon` varchar(512) DEFAULT NULL COMMENT '资源图标',
+  `type` tinyint(3) UNSIGNED NOT NULL COMMENT '类型：1菜单目录；2页面按钮；',
+  `url` varchar(512) DEFAULT NULL COMMENT '资源url，相对根路径的地址',
+  `orders` tinyint(3) UNSIGNED NOT NULL COMMENT '排序序号',
+  `status` tinyint(1) UNSIGNED NOT NULL COMMENT '状态：0禁用；1启用；',
+  `create_by` bigint(20) UNSIGNED NOT NULL COMMENT '创建人',
+  `create_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` bigint(20) UNSIGNED NOT NULL COMMENT '最近更新人',
+  `update_tm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最近更新时间',
+  `version` int(10) UNSIGNED NOT NULL DEFAULT '1' COMMENT '版本号',
+  
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_rcode` (`rcode`) USING BTREE,
+  KEY `idx_pcode` (`pcode`) USING BTREE,
+  KEY `idx_updatetm` (`update_tm`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资源表';*/
+
 
 DROP TABLE IF EXISTS `t_user_role`;
 CREATE TABLE IF NOT EXISTS `t_user_role` (
