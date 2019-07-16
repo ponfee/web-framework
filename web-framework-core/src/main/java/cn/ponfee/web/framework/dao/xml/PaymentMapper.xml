@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ponfee.web.framework.dao.mapper.PaymentMapper">
+
+  <!-- <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO t_payment(
+      order_id, user_id, order_no, order_amt, status, create_tm, update_tm
+    )
+    (
+      SELECT 
+        CASE
+          WHEN MAX(order_id) IS NULL THEN CONCAT(#{orderId},'00000001')
+          ELSE CONCAT(LEFT(MAX(order_id),9), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
+        END, 
+        #{userId}, #{orderNo}, #{orderAmt}, #{status}, NOW(), NOW()
+      FROM t_payment WHERE order_id LIKE '${orderId}%'
+    )
+  </insert>
+
+  <insert id="insert">
+    <selectKey resultType="string" keyProperty="orderId" order="BEFORE">
+      SELECT 
+        CASE
+          WHEN MAX(order_id) IS NULL THEN CONCAT(#{orderId},'00000001')
+          ELSE CONCAT(LEFT(MAX(order_id),9), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
+        END AS order_id
+      FROM t_payment WHERE order_id LIKE '${orderId}%'
+    </selectKey>
+    INSERT INTO t_payment(
+      order_id, user_id, order_no, order_amt, status, create_tm, update_tm
+    ) VALUES (
+      #{orderId}, #{userId}, #{orderNo}, #{orderAmt}, #{status}, NOW(), NOW()
+    )
+  </insert> -->
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO t_payment(
+      order_id, user_id, order_no, order_amt, biz_type, status, 
+      channel_type, source, client_ip, extra_data, remark, create_tm, update_tm
+    ) VALUES (
+      #{orderId}, #{userId}, #{orderNo}, #{orderAmt}, #{bizType}, #{status}, 
+      #{channelType}, #{source}, #{clientIp}, #{extraData}, #{remark}, NOW(), NOW()
+    )
+  </insert>
+
+  <select id="getNextOrderId" resultType="string">
+    SELECT 
+      CASE
+        WHEN MAX(order_id) IS NULL THEN CONCAT(#{_parameter},'00000001')
+        ELSE CONCAT(LEFT(MAX(order_id),9), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
+      END AS order_id
+    FROM t_payment WHERE order_id LIKE '${_parameter}%'
+  </select>
+
+</mapper>

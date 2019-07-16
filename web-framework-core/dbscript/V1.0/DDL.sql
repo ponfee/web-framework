@@ -98,6 +98,84 @@ CREATE TABLE IF NOT EXISTS `t_role_permit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色权限关联表';
 
 
+
+
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `t_register_contention`;
+CREATE TABLE IF NOT EXISTS `t_register_contention` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `attr` varchar(10) NOT NULL COMMENT 'attr',
+  `ckey` varchar(20) NOT NULL COMMENT 'key',
+  `cval` varchar(20) NOT NULL COMMENT 'value',
+  PRIMARY KEY (`id`), 
+  UNIQUE KEY `uk_attr_ckey` (`attr`,`ckey`) USING BTREE,
+  UNIQUE KEY `uk_attr_cval` (`attr`,`cval`) USING BTREE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资源注册抢占表';
+
+DROP TABLE IF EXISTS `t_payment`;
+CREATE TABLE `t_payment` (
+  `id`             bigint(20)   unsigned     NOT NULL AUTO_INCREMENT  COMMENT '自增主键ID',
+  `user_id`        bigint(20)   unsigned     NOT NULL                 COMMENT '用户ID',
+  `order_id`       varchar(30)               NOT NULL                 COMMENT '支付ID',
+  `order_no`       varchar(60)                         DEFAULT NULL   COMMENT '支付业务单号',
+  `order_amt`      bigint(20)   unsigned     NOT NULL                 COMMENT '订单金额（最小单位分）',
+  `biz_type`       smallint(5)  unsigned     NOT NULL                 COMMENT '业务类型：1大屏；',
+  `status`         smallint(5)  unsigned     NOT NULL  DEFAULT '0'    COMMENT '支付状态：0待买家付款；1支付成功；2支付失败；3待卖家收款；4交易关闭；',
+  `channel_type`   varchar(30)                         DEFAULT NULL   COMMENT '支付渠道类型',
+  `sfp_order_id`   varchar(60)                         DEFAULT NULL   COMMENT '顺手付单号',
+  `third_order_no` varchar(60)                         DEFAULT NULL   COMMENT '第三方单号',
+  `bank_id`        varchar(60)                         DEFAULT NULL   COMMENT '银行流水号',
+  `source`         varchar(20)                         DEFAULT NULL   COMMENT '来源：PC；H5；APP；',
+  `client_ip`      varchar(50)                         DEFAULT NULL   COMMENT '客户端IP',
+  `extra_data`     varchar(255)                        DEFAULT NULL   COMMENT '附加数据',
+  `remark`         varchar(255)                        DEFAULT NULL   COMMENT '备注',
+  `retry_count`    smallint(5)  unsigned     NOT NULL  DEFAULT '0'    COMMENT '重试次数（手动支付查询）',
+  `trade_tm`       datetime                            DEFAULT NULL   COMMENT '支付时间',
+  `create_tm`      datetime                  NOT NULL                 COMMENT '创建时间',
+  `update_tm`      datetime                  NOT NULL                 COMMENT '最近更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_orderid` (`order_id`),
+  KEY `idx_userid` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT = '支付表';
+
+DROP TABLE IF EXISTS `t_refund`;
+CREATE TABLE `t_refund` (
+  `id`             bigint(20)   unsigned      NOT NULL AUTO_INCREMENT  COMMENT '自增主键ID',
+  `user_id`        bigint(20)   unsigned      NOT NULL                 COMMENT '用户ID',
+  `refund_id`      varchar(30)                NOT NULL                 COMMENT '退款ID',
+  `order_id`       varchar(30)                NOT NULL                 COMMENT '支付ID',
+  `refund_no`      varchar(60)                          DEFAULT NULL   COMMENT '退款业务单号',
+  `refund_amt`     bigint(20)   unsigned      NOT NULL                 COMMENT '退款金额（最小单位分）',
+  `refund_rate`    decimal(5,2) unsigned      NOT NULL  DEFAULT 100    COMMENT '退款费率（百分数）',
+  `handle_fee`     bigint(20)   unsigned      NOT NULL  DEFAULT 0      COMMENT '退款手续费',
+  `refund_des`     varchar(255)                         DEFAULT NULL   COMMENT '退款描述',
+  `status`         smallint(5)  unsigned      NOT NULL  DEFAULT 0      COMMENT '退款状态：0退款处理中；1退款完成；2退款失败；',
+  `sfp_refund_id`  varchar(60)                          DEFAULT NULL   COMMENT '顺手付退款单号',
+  `bank_refund_id` varchar(60)                          DEFAULT NULL   COMMENT '第三方退款单号',
+  `remark`         varchar(255)                         DEFAULT NULL   COMMENT '备注',
+  `trade_tm`       datetime                             DEFAULT NULL   COMMENT '交易时间',
+  `retry_count`    smallint(5)  unsigned      NOT NULL  DEFAULT 0      COMMENT '重试次数（手动退款查询）',
+  `create_tm`      datetime                   NOT NULL                 COMMENT '创建时间',
+  `update_tm`      datetime                   NOT NULL                 COMMENT '最近更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_refundid` (`refund_id`),
+  KEY `idx_orderid` (`order_id`),
+  KEY `idx_userid` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT = '退款表';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 DROP TABLE IF EXISTS `t_dictionary`;
 CREATE TABLE `t_dictionary` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',

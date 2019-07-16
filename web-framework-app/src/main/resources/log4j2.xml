@@ -47,8 +47,9 @@
     <Logger name="dao" additivity="false" level="DEBUG" >
         <AppenderRef ref="Console"/>
     </Logger>
-    <!-- maven gav: com.googlecode.log4jdbc:log4jdbc:1.2
-         default.jdbc.driverClass=net.sf.log4jdbc.DriverSpy 
+    <!-- maven gav=com.googlecode.log4jdbc:log4jdbc:1.2
+         driverClass=net.sf.log4jdbc.DriverSpy 
+         url=jdbc:log4jdbc:mysql://ip:port/db?useUnicode=true&characterEncoding=UTF-8
          net.sf.log4jdbc.Slf4jSpyLogDelegator
     -->
     <!-- <Logger name="jdbc.audit" additivity="false" level="OFF">
@@ -71,7 +72,7 @@
     </Logger> -->
 
     <!-- additivity指定是否同时输出日志到父类的appender，缺省为true -->
-    <Logger name="cn.ponfee.web.framework" level="DEBUG" additivity="false">
+    <Logger name="cn.ponfee.web.framework" level="WARN" additivity="false">
       <AppenderRef ref="Console" />
       <AppenderRef ref="RollingFile" />
     </Logger>
