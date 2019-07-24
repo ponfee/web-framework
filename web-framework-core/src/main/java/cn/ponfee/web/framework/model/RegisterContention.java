@@ -10,14 +10,14 @@ public class RegisterContention implements java.io.Serializable {
     private static final long serialVersionUID = -7495851037267445803L;
 
     private Long id;
-    private String attr;
+    private String type;
     private String ckey;
     private String cval;
 
     public RegisterContention() {}
 
-    public RegisterContention(String attr, String ckey, String cval) {
-        this.attr = attr;
+    public RegisterContention(String type, String ckey, String cval) {
+        this.type = type;
         this.ckey = ckey;
         this.cval = cval;
     }
@@ -30,12 +30,12 @@ public class RegisterContention implements java.io.Serializable {
         this.id = id;
     }
 
-    public String getAttr() {
-        return attr;
+    public String getType() {
+        return type;
     }
 
-    public void setAttr(String attr) {
-        this.attr = attr;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getCkey() {

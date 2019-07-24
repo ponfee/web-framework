@@ -3,13 +3,13 @@
 <mapper namespace="cn.ponfee.web.framework.dao.mapper.RegisterContentionMapper">
 
   <insert id="insert">
-    INSERT INTO t_register_contention (attr, ckey, cval)
-    VALUES (#{attr},#{ckey},#{cval})
+    INSERT INTO t_register_contention (type, ckey, cval)
+    VALUES (#{type},#{ckey},#{cval})
   </insert>
 
   <select id="get" resultType="string">
     SELECT cval FROM t_register_contention 
-    WHERE attr=#{attr} AND ckey=#{ckey}
+    WHERE type=#{type} AND ckey=#{ckey}
   </select>
 
 </mapper>

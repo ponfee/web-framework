@@ -47,7 +47,7 @@
     SELECT 
       CASE
         WHEN MAX(order_id) IS NULL THEN CONCAT(#{_parameter},'00000001')
-        ELSE CONCAT(LEFT(MAX(order_id),9), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
+        ELSE CONCAT(LEFT(MAX(order_id),10), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
       END AS order_id
     FROM t_payment WHERE order_id LIKE '${_parameter}%'
   </select>

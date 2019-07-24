@@ -1,14 +1,14 @@
 package cn.ponfee.web.framework.service.impl;
 
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -29,26 +29,30 @@ public class RegisterContentionServiceImpl implements IRegisterContentionService
     private @Resource PlatformTransactionManager txManager; // DataSourceTransactionManager
 
     @Override
-    public Result<String> getOrContend(String attr, String key, String[] values) {
-        String val = dao.get(attr, key);
+    public Result<String> getOrContend(String type, String key, String[] values) {
+        String val = dao.get(type, key);
         if (val != null) {
             return Result.success(val);
         }
 
         List<String> vals = Arrays.asList(values);
-        Collections.shuffle(vals);
+        //Collections.shuffle(vals);
         for (String v : vals) {
             TransactionStatus status = txManager.getTransaction(
                 new DefaultTransactionDefinition(PROPAGATION_REQUIRES_NEW) // 开启新事务
             );
             try {
-                dao.add(new RegisterContention(attr, key, v));
+                dao.add(new RegisterContention(type, key, v));
                 txManager.commit(status);
                 val = v;
                 break;
             } catch (Exception e) {
                 txManager.rollback(status);
             }
+        }
+
+        if (val == null) {
+            val = dao.get(type, key);
         }
 
         return Result.success(val);

@@ -31,7 +31,7 @@ public class PaymentServiceImpl implements IPaymentService, InitializingBean {
     private static String currentOrderId;
 
     private @Resource IRegisterContentionService rcService;
-    private @Resource IPaymentDao dao;
+    private @Resource IPaymentDao paymentDao;
 
     /*@Override
     public Result<String> add(Payment payment) {
@@ -43,13 +43,15 @@ public class PaymentServiceImpl implements IPaymentService, InitializingBean {
     @Override
     public Result<String> add(Payment payment) {
         payment.setOrderId(this.getNextOrderId());
-        dao.add(payment);
+        paymentDao.add(payment);
         return Result.success(payment.getOrderId());
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String[] values = IntStream.range(0, 10).mapToObj(String::valueOf).toArray(String[]::new);
+        String[] values = IntStream.range(0, 100).mapToObj(
+            x -> StringUtils.leftPad(String.valueOf(x), 2, '0')
+        ).toArray(String[]::new);
         serverId = rcService.getOrContend("PAY", Networks.getHostIp(), values).getData();
         if (StringUtils.isEmpty(serverId)) {
             throw new NullPointerException("Server id can't be null.");
@@ -60,10 +62,10 @@ public class PaymentServiceImpl implements IPaymentService, InitializingBean {
         synchronized (LOCK) {
             String date = Dates.format(new Date(), "yyyyMMdd");
             if (currentOrderId == null || !currentOrderId.startsWith(date, 0)) {
-                currentOrderId = dao.getNextOrderId(date + serverId);
+                currentOrderId = paymentDao.getNextOrderId(date + serverId);
             } else {
-                int nextSeq = Integer.parseInt(currentOrderId.substring(9)) + 1;
-                currentOrderId = currentOrderId.substring(0, 9) 
+                int nextSeq = Integer.parseInt(currentOrderId.substring(10)) + 1;
+                currentOrderId = currentOrderId.substring(0, 10) 
                                + StringUtils.leftPad(String.valueOf(nextSeq), 8, '0');
             }
             return currentOrderId;
