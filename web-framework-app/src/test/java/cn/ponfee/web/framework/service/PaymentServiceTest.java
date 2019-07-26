@@ -5,9 +5,12 @@ package cn.ponfee.web.framework.service;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -18,6 +21,14 @@ import code.ponfee.commons.util.Dates;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class PaymentServiceTest extends BaseTest<IPaymentService> {
+
+    @Test
+    public void test() {
+        String[] values = IntStream.range(0, 100).mapToObj(
+           x -> StringUtils.leftPad(String.valueOf(x), 2, '0')
+        ).toArray(String[]::new);
+        System.out.println(Arrays.toString(values));
+    }
 
     @Test
     public void add1() {

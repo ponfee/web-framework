@@ -43,12 +43,22 @@
     )
   </insert>
 
-  <select id="getNextOrderId" resultType="string">
+  <!-- <select id="getNextOrderId" resultType="string">
     SELECT 
       CASE
         WHEN MAX(order_id) IS NULL THEN CONCAT(#{_parameter},'00000001')
         ELSE CONCAT(LEFT(MAX(order_id),10), LPAD(RIGHT(MAX(order_id),8)+1, 8, '0'))
       END AS order_id
+    FROM t_payment WHERE order_id LIKE '${_parameter}%'
+  </select> -->
+
+  <!-- <select id="getMaxOrderId" resultType="string">
+    SELECT IFNULL(MAX(order_id), CONCAT(#{_parameter},'00000000')) AS order_id
+    FROM t_payment WHERE order_id LIKE '${_parameter}%'
+  </select> -->
+
+  <select id="getNextOrderId" resultType="string">
+    SELECT CONCAT(#{_parameter}, LPAD(IF(MAX(order_id) IS NULL, 1, RIGHT(MAX(order_id),8)+1), 8, '0')) AS order_id
     FROM t_payment WHERE order_id LIKE '${_parameter}%'
   </select>
 

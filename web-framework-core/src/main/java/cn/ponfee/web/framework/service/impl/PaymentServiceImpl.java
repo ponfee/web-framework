@@ -28,7 +28,7 @@ public class PaymentServiceImpl implements IPaymentService, InitializingBean {
     private static final Object LOCK = new Object();
 
     private static String serverId;
-    private static String currentOrderId;
+    private static String currentOrderId = "";
 
     private @Resource IRegisterContentionService rcService;
     private @Resource IPaymentDao paymentDao;
@@ -61,7 +61,7 @@ public class PaymentServiceImpl implements IPaymentService, InitializingBean {
     private String getNextOrderId() {
         synchronized (LOCK) {
             String date = Dates.format(new Date(), "yyyyMMdd");
-            if (currentOrderId == null || !currentOrderId.startsWith(date, 0)) {
+            if (!currentOrderId.startsWith(date, 0)) {
                 currentOrderId = paymentDao.getNextOrderId(date + serverId);
             } else {
                 int nextSeq = Integer.parseInt(currentOrderId.substring(10)) + 1;

@@ -9,7 +9,7 @@
   <name>${project.artifactId}</name>
 
   <modules>
-  	<module>web-framework-common</module>
+    <module>web-framework-common</module>
     <module>web-framework-core</module>
     <module>web-framework-data</module>
     <module>web-framework-console</module>
