@@ -42,7 +42,6 @@ import code.ponfee.commons.model.PageBoundsResolver;
 import code.ponfee.commons.model.PageBoundsResolver.PageBounds;
 import code.ponfee.commons.model.PageHandler;
 import code.ponfee.commons.model.PageRequestParams;
-import code.ponfee.commons.util.Bytes;
 import code.ponfee.commons.util.Enums;
 
 /**
@@ -320,7 +319,7 @@ public class RedisManagerServiceImpl implements RedisManagerService {
         B64() {
             public @Override Object parse(String value) {
                 return StringUtils.isEmpty(value)
-                       ? Bytes.EMPTY_BYTES
+                       ? ArrayUtils.EMPTY_BYTE_ARRAY
                        : Base64.getUrlDecoder().decode(value);
             }
         };

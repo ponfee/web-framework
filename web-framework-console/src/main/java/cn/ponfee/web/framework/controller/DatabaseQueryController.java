@@ -39,6 +39,10 @@ import code.ponfee.commons.web.WebUtils;
 /**
  * Database query http api
  * 
+ * http://localhost:8100/database/query/view
+ *   default  : select * from t_user
+ *   secondary: select * from t_word_count
+ * 
  * @author Ponfee
  */
 @RequestMapping("database/query")
