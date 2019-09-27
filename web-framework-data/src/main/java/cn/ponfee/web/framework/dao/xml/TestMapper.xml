@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.ponfee.web.framework.dao.mapper.TestMapper">
 
+  <!-- 
+    CREATE TABLE `test_tx_secondary_2` (
+      `name` varchar(255) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   -->
   <delete id="delete">
     DELETE FROM test_tx_${datasource}_${index}
   </delete>

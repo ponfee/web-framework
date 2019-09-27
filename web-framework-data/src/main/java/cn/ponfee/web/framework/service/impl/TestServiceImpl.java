@@ -14,7 +14,8 @@ public class TestServiceImpl implements TestService {
     @Resource
     private TestMapper mapper;
 
-    @DataSourceNaming("#root[0]")
+    //@Transactional
+    @DataSourceNaming("#root[0]") // #root=arg[]
     @Override
     public void testTransaction(String datasource, boolean bool) {
         mapper.delete(datasource, "1");
