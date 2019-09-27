@@ -20,7 +20,7 @@ public class TestServiceImpl implements TestService {
     public void testTransaction(String datasource, boolean bool) {
         mapper.delete(datasource, "1");
         if (bool) {
-            System.out.println(1 / 0);
+            throw new RuntimeException("Transaction testing...");
         }
         mapper.delete(datasource, "2");
     }
