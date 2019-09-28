@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.Around;
 import code.ponfee.commons.data.DataSourceNaming;
 import code.ponfee.commons.data.MultipleDataSourceAspect;
 
-@SuppressWarnings("deprecation")
 //@Component
 //@Aspect
 public class MultipleDataSourceChanger extends MultipleDataSourceAspect {
