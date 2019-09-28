@@ -110,6 +110,10 @@
   <bean id="dsChangeAdvice" class="code.ponfee.commons.data.MultipleDataSourceAdvisor" />
 
   <!-- 
+    MultipleDataSourceAdvisor.doAround执行六次
+    MultipleDataSourceAdvisor.invoke  执行六次
+    MultipleDataSourceAspect.doAround 执行一次
+
     1、单独：
       MultipleDataSourceAdvisor.doAround：数据源切换正常
       MultipleDataSourceAdvisor.invoke  ：数据源切换正常
@@ -117,15 +121,37 @@
       transaction-xml                   ：事务正常
       transaction-annotation            ：事务正常
 
-    2、组合：
-      MultipleDataSourceAdvisor.doAround + transaction-xml       ：数据源切换正常(doAround执行六次)，事务正常
-      MultipleDataSourceAdvisor.doAround + transaction-annotation：数据源切换正常(doAround执行六次)，事务正常
+    2、transaction-xml：<aop:config proxy-target-class="true">
+      MultipleDataSourceAdvisor.doAround：数据源切换正常，事务正常√
+      MultipleDataSourceAdvisor.invoke  ：数据源切换正常，事务无效×
+      MultipleDataSourceAspect.doAround ：数据源切换无效，事务正常×
 
-      MultipleDataSourceAdvisor.invoke   + transaction-xml       ：数据源切换正常(invoke  执行六次)，事务无效
-      MultipleDataSourceAdvisor.invoke   + transaction-annotation：数据源切换正常(invoke  执行六次)，事务无效
+    3、transaction-xml：<aop:config proxy-target-class="false">
+      MultipleDataSourceAdvisor.doAround：数据源切换无效，事务正常×
+      MultipleDataSourceAdvisor.invoke  ：数据源切换无效，事务无效×
+      MultipleDataSourceAspect.doAround ：数据源切换正常，事务正常√
 
-      MultipleDataSourceAspect.doAround  + transaction-xml       ：数据源切换无效(doAround执行一次)，事务正常
-      MultipleDataSourceAspect.doAround  + transaction-annotation：数据源切换正常(doAround执行一次)，事务正常
+    4、<tx:annotation-driven proxy-target-class="true">，<aop:config proxy-target-class="true">
+      MultipleDataSourceAdvisor.doAround：数据源切换正常，事务正常√
+      MultipleDataSourceAdvisor.invoke  ：数据源切换正常，事务无效×
+
+    5、<tx:annotation-driven proxy-target-class="true">，<aop:config proxy-target-class="false">
+      MultipleDataSourceAdvisor.doAround：数据源切换正常，事务正常√
+      MultipleDataSourceAdvisor.invoke  ：数据源切换正常，事务无效×
+
+    6、<tx:annotation-driven proxy-target-class="false">，<aop:config proxy-target-class="true">
+      MultipleDataSourceAdvisor.doAround：数据源切换正常，事务正常√
+      MultipleDataSourceAdvisor.invoke  ：数据源切换正常，事务无效×
+
+    7、<tx:annotation-driven proxy-target-class="false">，<aop:config proxy-target-class="false">
+      MultipleDataSourceAdvisor.doAround：数据源切换无效，事务正常×
+      MultipleDataSourceAdvisor.invoke  ：数据源切换无效，事务无效×
+
+    8、<tx:annotation-driven proxy-target-class="true">
+      MultipleDataSourceAspect.doAround ：数据源切换正常，事务正常√
+
+    9、<tx:annotation-driven proxy-target-class="false">
+      MultipleDataSourceAspect.doAround ：数据源切换正常，事务正常√
    -->
   <aop:config proxy-target-class="true">
     <aop:pointcut id="dbTxMgrPointcut" expression="execution(public * cn.ponfee.web.framework.service.impl..*..*(..))" />
