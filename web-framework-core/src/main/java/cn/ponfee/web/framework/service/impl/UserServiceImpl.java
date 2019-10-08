@@ -20,7 +20,6 @@ import cn.ponfee.web.framework.model.Role;
 import cn.ponfee.web.framework.model.User;
 import cn.ponfee.web.framework.model.UserRole;
 import cn.ponfee.web.framework.service.IUserService;
-
 import code.ponfee.commons.collect.Collects;
 import code.ponfee.commons.constrain.Constraint;
 import code.ponfee.commons.constrain.Constraints;
@@ -29,6 +28,7 @@ import code.ponfee.commons.log.LogAnnotation.LogType;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.model.ResultCode;
+import code.ponfee.commons.reflect.BeanConverts;
 import code.ponfee.commons.tree.TreeNode;
 
 /**
@@ -102,7 +102,7 @@ public class UserServiceImpl implements IUserService {
         userDao.update(user);
 
         // update roles
-        List<Long> list = Collects.flatList(userRoleDao.queryByUserId(user.getId()), "id");
+        List<Long> list = BeanConverts.toList(userRoleDao.queryByUserId(user.getId()), "id");
         if (CollectionUtils.isNotEmpty(Collects.different(list, user.getRoleIds()))) {
             userRoleDao.delByUserId(user.getId());
             List<UserRole> roles = new ArrayList<>(user.getRoleIds().size());
