@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.ponfee.web.framework.model.RedisKey;
 import cn.ponfee.web.framework.service.RedisManagerService;
-import cn.ponfee.web.framework.service.impl.RedisManagerServiceImpl.MatchMode;
+import cn.ponfee.web.framework.service.impl.AbstractRedisManagerService.MatchMode;
+import cn.ponfee.web.framework.service.impl.HeavyweightRedisManagerServiceImpl;
 import code.ponfee.commons.export.HtmlExporter;
 import code.ponfee.commons.export.Table;
 import code.ponfee.commons.export.Thead;
@@ -52,7 +53,8 @@ public class RedisManagerController {
     private static final List<BaseNode<Integer, Thead>> THEADS = Arrays.asList(
         new BaseNode<>(1, 0, 1, new Thead("key",    new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null)),
         new BaseNode<>(2, 0, 2, new Thead("type",   new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
-        new BaseNode<>(3, 0, 3, new Thead("expire", new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null))
+        new BaseNode<>(3, 0, 3, new Thead("expire", new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
+        new BaseNode<>(4, 0, 4, new Thead("value",  new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null))
     );
 
     private static final List<String> EXPIRES = Arrays.asList("ALL", "INFINITY");
@@ -66,7 +68,7 @@ public class RedisManagerController {
 
     @GetMapping("view")
     public void query4view(PageRequestParams params, HttpServletResponse resp) {
-        Table<RedisKey> table = new Table<>(THEADS, rk -> BeanConverts.toArray(rk, "key", "type", "expire"));
+        Table<RedisKey> table = new Table<>(THEADS, rk -> BeanConverts.toArray(rk, "key", "type", "expire", "value"));
         Page<RedisKey> page = service.query4page(params);
         page.process(row -> table.addRow(row));
         table.toEnd();
@@ -115,22 +117,27 @@ public class RedisManagerController {
     private String buildForm(PageRequestParams params) {
         MatchMode matchmode = Enums.ofIgnoreCase(MatchMode.class, params.getString("matchmode"), MatchMode.HEAD);
         String expiretype = params.getString("expiretype");
-        return new StringBuilder(2048)
+        StringBuilder html = new StringBuilder(2048)
             .append("<select name=\"matchmode\">\n")
             .append("  <option value=\"HEAD\"").append(matchmode(matchmode, MatchMode.HEAD)).append(">HEAD</option>\n")
             .append("  <option value=\"LIKE\"").append(matchmode(matchmode, MatchMode.LIKE)).append(">LIKE</option>\n")
             .append("  <option value=\"TAIL\"").append(matchmode(matchmode, MatchMode.TAIL)).append(">TAIL</option>\n")
             .append("  <option value=\"EQUAL\"").append(matchmode(matchmode, MatchMode.EQUAL)).append(">EQUAL</option>\n")
-            .append("</select>\n")
-            .append("<select name=\"expiretype\">\n")
-            .append("  <option value=\"ALL\"").append(expiretype(expiretype, "ALL")).append(">ALL</option>\n")
-            .append("  <option value=\"INFINITY\"").append(expiretype(expiretype, "INFINITY")).append(">INFINITY</option>\n")
-            .append("</select>\n")
-            .append("<input type=\"text\" name=\"keyword\" value=\"").append(params.getString("keyword")).append("\"/>\n")
+            .append("</select>\n");
+
+        if (service instanceof HeavyweightRedisManagerServiceImpl) {
+            html.append("<select name=\"expiretype\">\n")
+                .append("  <option value=\"ALL\"").append(expiretype(expiretype, "ALL")).append(">ALL</option>\n")
+                .append("  <option value=\"INFINITY\"").append(expiretype(expiretype, "INFINITY")).append(">INFINITY</option>\n")
+                .append("</select>\n");
+        }
+
+        html.append("<input type=\"text\" name=\"keyword\" value=\"").append(params.getString("keyword")).append("\"/>\n")
             .append("<input type=\"submit\" value=\"search\"/>\n")
             .append("<input type=\"button\" onclick=\"refKey()\" value=\"refresh\" />")
-            .append("<div style=\"width:100%;height:3px;\"></div>")
-            .toString();
+            .append("<div style=\"width:100%;height:3px;\"></div>");
+
+        return html.toString();
     }
 
     private String buildFoot() {

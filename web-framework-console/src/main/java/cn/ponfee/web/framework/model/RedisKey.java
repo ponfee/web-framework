@@ -14,13 +14,15 @@ public class RedisKey implements java.io.Serializable, Comparable<Object> {
 
     private String key;
     private DataType type;
+    private String value;
     private String expire;
 
     public RedisKey() {}
 
-    public RedisKey(String key, DataType type, long expire) {
+    public RedisKey(String key, DataType type, String value, long expire) {
         this.key = key;
         this.type = type;
+        this.value = value;
         this.expire = expire == -2 
                     ? "EXPIRED" 
                     : expire == -1 
@@ -42,6 +44,14 @@ public class RedisKey implements java.io.Serializable, Comparable<Object> {
 
     public void setType(DataType type) {
         this.type = type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getExpire() {
@@ -71,8 +81,8 @@ public class RedisKey implements java.io.Serializable, Comparable<Object> {
     public boolean equals(Object o) {
         if (o instanceof RedisKey) {
             return this.getKey().equals(((RedisKey) o).getKey());
-        } else if (o instanceof CharSequence) {
-            return StringUtils.equals(this.getKey(), (CharSequence) o);
+        } else if (o instanceof String) {
+            return StringUtils.equals(this.getKey(), (String) o);
         } else {
             return false;
         }
