@@ -95,9 +95,6 @@
                 <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
               </bean>
             </property>
-            <property name="serializationInclusion">
-              <value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
-            </property>
           </bean> -->
           <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
             <property name="dateFormat">
