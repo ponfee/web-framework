@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
 
@@ -35,7 +36,7 @@ import code.ponfee.commons.util.Enums;
  * 
  * @author Ponfee
  */
-//@Service("heavyweightRedisManagerService")
+@Service("heavyweightRedisManagerService")
 public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerService {
 
     private static final int BATCH_SIZE = 2000;
@@ -57,7 +58,7 @@ public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerServ
         boolean ignoreExpire = !"INFINITY".equalsIgnoreCase(params.getString("expiretype"));
 
         if (ignoreKeyword && ignoreExpire) {
-            return redisKeys; // query all
+            return Collections.unmodifiableList(redisKeys); // query all
         }
 
         List<RedisKey> list = new LinkedList<>();
