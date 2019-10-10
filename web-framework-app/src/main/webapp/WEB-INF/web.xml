@@ -96,7 +96,7 @@
 
   <!-- webContextFilter -->
   <filter>
-    <filter-name>webContextFilter</filter-name>
+    <filter-name>0000webContextFilter</filter-name>
     <filter-class>code.ponfee.commons.web.WebContext$WebContextFilter</filter-class>
     <async-supported>true</async-supported>
     <init-param>
@@ -105,7 +105,7 @@
     </init-param>
   </filter>
   <filter-mapping>
-    <filter-name>webContextFilter</filter-name>
+    <filter-name>0000webContextFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
