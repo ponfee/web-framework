@@ -49,7 +49,7 @@ public abstract class AbstractRedisManagerService implements RedisManagerService
     protected abstract void onDelete(List<String> keys);
 
     @Override
-    public final Page<RedisKey> query4page(PageRequestParams params) {
+    public Page<RedisKey> query4page(PageRequestParams params) {
         List<RedisKey> list = query4list(params);
 
         if (CollectionUtils.isEmpty(list)) {
