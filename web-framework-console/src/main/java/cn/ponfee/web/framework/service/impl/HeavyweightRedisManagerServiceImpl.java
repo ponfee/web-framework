@@ -21,7 +21,6 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
 
@@ -36,11 +35,12 @@ import code.ponfee.commons.util.Enums;
  * 
  * @author Ponfee
  */
-@Service("heavyweightRedisManagerService")
+//@Service("heavyweightRedisManagerService")
 public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerService {
 
     private static final int BATCH_SIZE = 2000;
     private static final int REFRESH_THRESHOLD_MILLIS = 15000;
+    private static final String INFINITY = "INFINITY";
     private static final Lock LOCK = new ReentrantLock();
     private static List<RedisKey> redisKeys = Collections.synchronizedList(new LinkedList<>()); // new CopyOnWriteArrayList<>();
     private static volatile long lastRefreshTime = 0;
@@ -55,7 +55,7 @@ public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerServ
 
         String keyword = params.getString("keyword"), matchmode = params.getString("matchmode");
         boolean ignoreKeyword = StringUtils.isEmpty(keyword);
-        boolean ignoreExpire = !"INFINITY".equalsIgnoreCase(params.getString("expiretype"));
+        boolean ignoreExpire = !INFINITY.equalsIgnoreCase(params.getString("expiretype"));
 
         if (ignoreKeyword && ignoreExpire) {
             return Collections.unmodifiableList(redisKeys); // query all
@@ -65,19 +65,19 @@ public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerServ
         for (RedisKey key : redisKeys) {
             // *：query infinity expire
             if (ignoreKeyword) {
-                if ("INFINITY".equalsIgnoreCase(key.getExpire())) {
+                if (INFINITY.equalsIgnoreCase(key.getExpire())) {
                     list.add(key);
                 }
                 continue;
             }
 
             // *：query keyword
-            if (!ignoreExpire && !"INFINITY".equalsIgnoreCase(key.getExpire())) {
+            if (!ignoreExpire && !INFINITY.equalsIgnoreCase(key.getExpire())) {
                 continue; // query infinity expire and key is not infinity
             }
 
             // *：normal
-            switch (Enums.ofIgnoreCase(MatchMode.class, matchmode, MatchMode.EQUAL)) {
+            switch (Enums.ofIgnoreCase(MatchMode.class, matchmode, MatchMode.LIKE)) {
                 case LIKE:
                     if (key.contains(keyword)) {
                         list.add(key);

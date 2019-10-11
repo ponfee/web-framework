@@ -114,14 +114,14 @@ public class RedisManagerController {
 
     // ------------------------------------------------------------private methods
     private String buildForm(PageRequestParams params) {
-        MatchMode matchmode = Enums.ofIgnoreCase(MatchMode.class, params.getString("matchmode"), MatchMode.HEAD);
+        MatchMode matchmode = Enums.ofIgnoreCase(MatchMode.class, params.getString("matchmode"), MatchMode.LIKE);
         String expiretype = params.getString("expiretype");
         StringBuilder html = new StringBuilder(2048)
             .append("<select name=\"matchmode\">\n")
-            .append("  <option value=\"HEAD\"").append(matchmode(matchmode, MatchMode.HEAD)).append(">HEAD</option>\n")
             .append("  <option value=\"LIKE\"").append(matchmode(matchmode, MatchMode.LIKE)).append(">LIKE</option>\n")
-            .append("  <option value=\"TAIL\"").append(matchmode(matchmode, MatchMode.TAIL)).append(">TAIL</option>\n")
             .append("  <option value=\"EQUAL\"").append(matchmode(matchmode, MatchMode.EQUAL)).append(">EQUAL</option>\n")
+            .append("  <option value=\"HEAD\"").append(matchmode(matchmode, MatchMode.HEAD)).append(">HEAD</option>\n")
+            .append("  <option value=\"TAIL\"").append(matchmode(matchmode, MatchMode.TAIL)).append(">TAIL</option>\n")
             .append("</select>\n");
 
         if (service instanceof HeavyweightRedisManagerServiceImpl) {
@@ -131,7 +131,7 @@ public class RedisManagerController {
                 .append("</select>\n");
         }
 
-        html.append("<input type=\"text\" name=\"keyword\" value=\"").append(params.getString("keyword")).append("\"/>\n")
+        html.append("<input type=\"text\" name=\"keyword\" value=\"").append(params.getString("keyword")).append("\" size=\"50\"/>\n")
             .append("<input type=\"submit\" value=\"search\"/>\n")
             .append("<input type=\"button\" onclick=\"refKey()\" value=\"refresh\" />")
             .append("<div style=\"width:100%;height:3px;\"></div>");

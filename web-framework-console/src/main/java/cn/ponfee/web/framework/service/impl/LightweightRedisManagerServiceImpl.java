@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.stereotype.Service;
 
 import cn.ponfee.web.framework.model.RedisKey;
 import code.ponfee.commons.io.Closeables;
@@ -20,24 +21,24 @@ import code.ponfee.commons.util.Enums;
  * 
  * @author Ponfee
  */
-//@Service("lightweightRedisManagerService")
+@Service("lightweightRedisManagerService")
 public class LightweightRedisManagerServiceImpl extends AbstractRedisManagerService {
 
     @Override
     public List<RedisKey> query4list(PageRequestParams params) {
         MatchMode matchMode = Enums.ofIgnoreCase(
-            MatchMode.class, params.getString("matchmode"), MatchMode.EQUAL
+            MatchMode.class, params.getString("matchmode"), MatchMode.LIKE
         );
         String key = matchMode.build(params.getString("keyword"));
         switch (matchMode) {
             case EQUAL:
-                if (StringUtils.isNotEmpty(key)) {
-                    return redis.execute((RedisCallback<List<RedisKey>>) conn -> {
-                        RedisKey rk = getAsString(conn, key.getBytes());
-                        return rk.getType() == DataType.NONE ? null : Collections.singletonList(rk);
-                    });
+                if (StringUtils.isEmpty(key)) {
+                    return null;
                 }
-                break;
+                return redis.execute((RedisCallback<List<RedisKey>>) conn -> {
+                    RedisKey rk = getAsString(conn, key.getBytes());
+                    return rk.getType() == DataType.NONE ? null : Collections.singletonList(rk);
+                });
             default:
                 int pageSize = params.getPageSize();
                 return redis.execute(
@@ -57,8 +58,6 @@ public class LightweightRedisManagerServiceImpl extends AbstractRedisManagerServ
                     })
                 );
         }
-
-        return null;
     }
 
     @Override
