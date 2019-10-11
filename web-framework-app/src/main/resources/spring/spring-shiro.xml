@@ -30,7 +30,7 @@
     <!-- Shiro的核心安全接口，这个属性是必须的 -->
     <property name="securityManager" ref="securityManager" />
     <property name="loginUrl" value="/page/login.html" />
-    <property name="unauthorizedUrl" value="/page/unauthorized.html" />
+    <property name="unauthorizedUrl" value="/page/401.html" />
     <!-- <property name="successUrl" value="/page/index.html"/> AuthenticationFilter -->
     <property name="filters">
       <map>
@@ -55,7 +55,7 @@
     <!-- authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter -->
     <property name="filterChainDefinitions">
       <value>
-        /page/unauthorized.html=anon
+        /page/401.html=anon
         /page/404.html=anon
         /page/500.html=anon
         /page/static/**=anon

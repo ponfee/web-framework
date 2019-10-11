@@ -323,7 +323,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
      */
     private boolean response(HttpServletRequest req, HttpServletResponse resp, 
                              ResultCode rc, String msg, String redirectUrl) throws IOException {
-        redirectUrl = org.apache.shiro.web.util.WebUtils.getContextPath(req) + redirectUrl;
+        redirectUrl = WebUtils.getContextPath(req) + redirectUrl;
         if (WebUtils.isAjax(req)) {
             WebUtils.respJson(resp, new Result<>(rc.getCode(), msg, redirectUrl));
         } else {

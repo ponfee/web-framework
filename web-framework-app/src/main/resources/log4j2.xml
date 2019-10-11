@@ -44,7 +44,7 @@
       Mybatis: <setting name="logImpl" value="SLF4J" />
                <setting name="logPrefix" value="dao." />
       Instead by log4jdbc: jdbc.sqltiming -->
-    <Logger name="dao" additivity="false" level="DEBUG" >
+    <Logger name="dao" additivity="false" level="WARN" >
         <AppenderRef ref="Console"/>
     </Logger>
     <!-- maven gav=com.googlecode.log4jdbc:log4jdbc:1.2

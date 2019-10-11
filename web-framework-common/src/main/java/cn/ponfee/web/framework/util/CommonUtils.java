@@ -12,7 +12,7 @@ import code.ponfee.commons.jce.passwd.BCrypt;
 public class CommonUtils {
 
     // RSA加密组件，私钥已经包含公钥
-    private static final CryptoProvider DECRYPTOR = CryptoProvider.rsaPrivateKeyProvider(
+    private static final CryptoProvider CRYPTOR = CryptoProvider.rsaPrivateKeyProvider(
           "MIIEpAIBAAKCAQEAghx+O+RvGxl3Nuwpztivr26DBEgxVvSx/t6s5Y/7y51NgRil"
         + "s3O/WsAe6XKKTUzXWcByd+NXlMmwPscrlR9hfNZXq4jpfFnv7Qq7++3jP5inoUCd"
         + "wXkjQkn2SqarzOtl5d0NWovobkolSzVuWoDBXB66noqLA9fTvdIJYfYRo4jLSWuS"
@@ -80,7 +80,7 @@ public class CommonUtils {
      */
     public static String decryptPassword(String password) {
         try {
-            return DECRYPTOR.decrypt(password);
+            return CRYPTOR.decrypt(password);
         } catch (Exception e) {
             throw new IllegalArgumentException("密码无效");
         }
@@ -94,7 +94,7 @@ public class CommonUtils {
      */
     public static String encryptPassword(String password) {
         //return ENCRYPTOR.encrypt(password);
-        return DECRYPTOR.encrypt(password);
+        return CRYPTOR.encrypt(password);
     }
 
 }

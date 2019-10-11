@@ -16,7 +16,7 @@
 
   <!-- scan the package and the sub package -->
   <!-- use-default-filters="false" 指定不扫描@Service、@Repository等 -->
-  <context:component-scan base-package="cn.ponfee.web.framework,code.ponfee.commons" use-default-filters="false">
+  <context:component-scan base-package="cn.ponfee.web.framework" use-default-filters="false">
     <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
     <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />

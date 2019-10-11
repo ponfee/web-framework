@@ -20,7 +20,7 @@ import code.ponfee.commons.model.Result;
  */
 @RestController
 @RequestMapping("test")
-public class TestController {
+public class TestTransactionController {
 
     @Resource
     TestService service;

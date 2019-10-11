@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +49,6 @@ import code.ponfee.commons.web.WebUtils;
 @RestController
 public class DatabaseQueryController {
 
-    private @Value("${web.context.path:}") String contextPath;
     private @Resource DatabaseQueryService service;
 
     @GetMapping("page")
@@ -62,7 +61,7 @@ public class DatabaseQueryController {
     // Oracle: select table_name from tabs
     //  Mysql: select table_name from INFORMATION_SCHEMA.TABLES
     @GetMapping("view")
-    public void query4view(PageRequestParams params, HttpServletResponse resp) {
+    public void query4view(PageRequestParams params, HttpServletRequest req, HttpServletResponse resp) {
         Page<LinkedHashMap<String, Object>> page;
         String errorMsg = null;
         try {
@@ -89,7 +88,7 @@ public class DatabaseQueryController {
         try (HtmlExporter exporter = new HtmlExporter()) {
             exporter.build(table);
             PaginationHtmlBuilder builder = PaginationHtmlBuilder.newBuilder(
-                "Database Query", contextPath + "/database/query/view", page
+                "Database Query", WebUtils.getContextPath(req) + "/database/query/view", page
             );
             builder.table(exporter.body())
                    .scripts(PaginationHtmlBuilder.CDN_JQUERY)

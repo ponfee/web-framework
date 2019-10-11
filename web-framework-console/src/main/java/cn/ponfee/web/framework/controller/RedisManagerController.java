@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,8 +48,6 @@ import code.ponfee.commons.web.WebUtils;
 @RestController
 public class RedisManagerController {
 
-    private @Value("${web.context.path:}") String contextPath;
-
     private static final List<BaseNode<Integer, Thead>> THEADS = Arrays.asList(
         new BaseNode<>(1, 0, 1, new Thead("key",    new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null)),
         new BaseNode<>(2, 0, 2, new Thead("type",   new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
@@ -67,12 +65,13 @@ public class RedisManagerController {
     }
 
     @GetMapping("view")
-    public void query4view(PageRequestParams params, HttpServletResponse resp) {
+    public void query4view(PageRequestParams params, HttpServletRequest req, HttpServletResponse resp) {
         Table<RedisKey> table = new Table<>(THEADS, rk -> BeanConverts.toArray(rk, "key", "type", "expire", "value"));
         Page<RedisKey> page = service.query4page(params);
         page.process(row -> table.addRow(row));
         table.toEnd();
         try (HtmlExporter exporter = new HtmlExporter()) {
+            String contextPath = WebUtils.getContextPath(req);
             exporter.build(table);
             PaginationHtmlBuilder builder = PaginationHtmlBuilder.newBuilder(
                 "Redis Manager", contextPath + "/redis/mgr/view", page
@@ -81,7 +80,7 @@ public class RedisManagerController {
                    .scripts(PaginationHtmlBuilder.CDN_JQUERY)
                    .form(buildForm(params))
                    .params(params)
-                   .foot(buildFoot());
+                   .foot(buildFoot(contextPath));
             WebUtils.response(resp, ContentType.TEXT_HTML.value(), builder.build(), Files.UTF_8);
         } 
     }
@@ -140,7 +139,7 @@ public class RedisManagerController {
         return html.toString();
     }
 
-    private String buildFoot() {
+    private String buildFoot(String contextPath) {
         return new StringBuilder(HtmlExporter.HORIZON)
             .append("<form method=\"DELETE\" name=\"delete\">")
             .append("<input type=\"text\" name=\"key\" />")
@@ -170,16 +169,16 @@ public class RedisManagerController {
             .append("\n<script>\n")
 
             .append("function delKey(){")
-            .append("$.ajax({url:'"+contextPath+"/redis/mgr/delete',type:'DELETE',dataType:'json',contentType:'application/json;charset=utf-8',")
+            .append("$.ajax({url:'" + contextPath + "/redis/mgr/delete',type:'DELETE',dataType:'json',contentType:'application/json;charset=utf-8',")
             .append("data:JSON.stringify([$(\"form[name='delete'] input[name='key']\").val()]),success:function(result){alert(result.msg)}});")
             .append("}\n")
 
             .append("function refKey(){")
-            .append("$.ajax({url:'"+contextPath+"/redis/mgr/refresh',type:'POST',success:function(result){alert(result.msg)}});")
+            .append("$.ajax({url:'" + contextPath + "/redis/mgr/refresh',type:'POST',success:function(result){alert(result.msg)}});")
             .append("}\n")
 
             .append("function setKey(){")
-            .append("$.ajax({url:'"+contextPath+"/redis/mgr/set',type:'PUT',dataType:'json',data:{")
+            .append("$.ajax({url:'" + contextPath + "/redis/mgr/set',type:'PUT',dataType:'json',data:{")
             .append("key:$(\"form[name='set'] input[name='key']\").val(),")
             .append("value:$(\"form[name='set'] input[name='value']\").val(),")
             .append("expire:$(\"form[name='set'] input[name='expire']\").val(),")

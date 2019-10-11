@@ -59,7 +59,7 @@ public class JwtManager {
      * Creates the jwt with subject
      * 
      * @param subject
-     * @return
+     * @return jwt
      */
     public String create(String subject) {
         return create(HS256, jwtExpSeconds * 1000, 
@@ -73,7 +73,7 @@ public class JwtManager {
      * @param expireMillis
      * @param refreshMillis
      * @param subject
-     * @return
+     * @return jwt
      */
     public String create(SignatureAlgorithm alg, int expireMillis, 
                          int refreshMillis, String subject) {
