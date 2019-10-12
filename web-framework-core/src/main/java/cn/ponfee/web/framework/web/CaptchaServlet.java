@@ -13,10 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.RateLimiter;
 
-import code.ponfee.commons.collect.Collects;
-import code.ponfee.commons.io.Files;
 import code.ponfee.commons.jedis.JedisClient;
 import code.ponfee.commons.limit.request.RedisRequestLimiter;
 import code.ponfee.commons.limit.request.RequestLimiter;
@@ -57,7 +56,6 @@ public class CaptchaServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        request.setCharacterEncoding(Files.UTF_8);
         String type = Objects.toString(request.getParameter("type"), "");
         JedisClient jedis = SpringContextHolder.getBean(JedisClient.class);
         RedisRequestLimiter limiter = RedisRequestLimiter.create(jedis);
@@ -72,7 +70,7 @@ public class CaptchaServlet extends HttpServlet {
                     String captcha = generateImg(code);
                     limiter.cacheCaptcha(captcid, code, 120);
                     result = Result.success(
-                        Collects.toMap(CAPTCID, captcid, CAPTCNE, captcne, CAPTCHA, captcha)
+                        ImmutableMap.of(CAPTCID, captcid, CAPTCNE, captcne, CAPTCHA, captcha)
                     );
                 } else {
                     result = Result.failure(ResultCode.REQUEST_TIMEOUT, "服务繁忙，请稍后再试！");
@@ -81,12 +79,12 @@ public class CaptchaServlet extends HttpServlet {
                 break;
             case TYPE_PHONE:
                 code = RandomStringUtils.randomNumeric(6);
-                // cache redis and send sms
+                // TODO: cache redis and send sms
                 WebUtils.respJson(response, Result.SUCCESS);
                 break;
             case TYPE_EMAIL:
                 code = ObjectUtils.uuid22() + RandomStringUtils.randomAlphanumeric(8);
-                // cache redis and send email
+                // TODO: cache redis and send email
                 WebUtils.respJson(response, Result.SUCCESS);
                 break;
             default:

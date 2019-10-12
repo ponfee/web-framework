@@ -27,7 +27,7 @@ public class Article {
     private String content;
 
     @NotEmpty(message = "邮箱不能为空")
-    @Email(regexp = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", message = "邮箱格式错误")
+    @Email(regexp = "^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$", message = "邮箱格式错误")
     private String email;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd") // 需引入joda-time

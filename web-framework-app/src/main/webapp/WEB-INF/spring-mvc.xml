@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:p="http://www.springframework.org/schema/p"
-  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:mvc="http://www.springframework.org/schema/mvc" 
+  xmlns:aop="http://www.springframework.org/schema/aop" 
   xmlns:context="http://www.springframework.org/schema/context"
   xmlns:util="http://www.springframework.org/schema/util"
   xsi:schemaLocation="
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
  ">
@@ -20,8 +21,10 @@
     <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
     <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+    <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
   </context:component-scan>
 
+  <aop:aspectj-autoproxy proxy-target-class="true" />
 
   <!-- spring bean工具类 -->
   <bean class="code.ponfee.commons.util.SpringContextHolder" />
@@ -37,11 +40,17 @@
   <mvc:resources mapping="/page/**" location="/page/" />
 
 
-  <!-- if you use annotation you must configure following setting -->
-  <bean id="validator"
-    class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+
+  <!-- JSR303 Validator: if you use annotation you must configure following setting -->
+  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
     <property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+    <property name="validationPropertyMap">
+      <map><entry key="#{T(org.hibernate.validator.HibernateValidatorConfiguration).FAIL_FAST}" value="true" /></map>
+    </property>
+    <!-- 如果不加下面配置, 默认使用classpath下的 ValidationMessages.properties -->
+    <!-- <property name="validationMessageSource" ref="messageSource" /> -->
   </bean>
+
   <bean id="contentNegotiationManager"
     class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
     <property name="favorPathExtension" value="false" />
@@ -69,8 +78,7 @@
   </bean>
 
   <!-- mvc注解映射的支持 -->
-  <mvc:annotation-driven validator="validator"
-    content-negotiation-manager="contentNegotiationManager">
+  <mvc:annotation-driven validator="validator" content-negotiation-manager="contentNegotiationManager">
     <mvc:message-converters register-defaults="false">
       <bean class="org.springframework.http.converter.StringHttpMessageConverter">
         <property name="supportedMediaTypes">
@@ -125,6 +133,17 @@
       <bean class="code.ponfee.commons.model.PageMethodArgumentResolver" />
     </mvc:argument-resolvers>
   </mvc:annotation-driven>
+
+
+
+  <!-- @Validated在类中注解，校验方法参数：public Result test(@Range(min=1, max=9, message="年级只能从1-9") @RequestParam(name="grade") int grade) {} -->
+  <bean id="MethodValidationPostProcessor" class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor">
+    <property name="validator">
+      <bean class="code.ponfee.commons.constrain.FastFailValidatorFactoryBean" />
+    </property>
+  </bean>
+
+
 
   <!-- <mvc:cors>
     <mvc:mapping path="/**" 

@@ -28,7 +28,7 @@ public class DatabaseQueryServiceImpl implements DatabaseQueryService {
     private @Resource SqlMapper sqlMapper;
 
     @SuppressWarnings("unchecked")
-    @DataSourceNaming("#root[0].params['datasource']")
+    @DataSourceNaming("#root[0].params['datasource']") // 指定数据源：@DataSourceNaming("'default'")
     @Override
     public Page<LinkedHashMap<String, Object>> query4page(PageRequestParams params) {
         String sql;
