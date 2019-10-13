@@ -136,10 +136,10 @@
 
 
 
-  <!-- @Validated在类中注解，校验方法参数：public Result test(@Range(min=1, max=9, message="年级只能从1-9") @RequestParam(name="grade") int grade) {} -->
+  <!-- @Validated在类中注解，校验方法参数：public Result test(@Range(min=1, max=9, message="1至9之间") @RequestParam(name="grade") int grade) {} -->
   <bean id="MethodValidationPostProcessor" class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor">
     <property name="validator">
-      <bean class="code.ponfee.commons.constrain.FastFailValidatorFactoryBean" />
+      <bean class="code.ponfee.commons.constrain.FailFastValidatorFactoryBean" />
     </property>
   </bean>
 
