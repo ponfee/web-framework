@@ -115,7 +115,6 @@ public class RedisManagerController {
     // ------------------------------------------------------------private methods
     private String buildForm(PageRequestParams params) {
         MatchMode matchmode = Enums.ofIgnoreCase(MatchMode.class, params.getString("matchmode"), MatchMode.LIKE);
-        String expiretype = params.getString("expiretype");
         StringBuilder html = new StringBuilder(2048)
             .append("<select name=\"matchmode\">\n")
             .append("  <option value=\"LIKE\"").append(matchmode(matchmode, MatchMode.LIKE)).append(">LIKE</option>\n")
@@ -125,6 +124,7 @@ public class RedisManagerController {
             .append("</select>\n");
 
         if (service instanceof HeavyweightRedisManagerServiceImpl) {
+            String expiretype = params.getString("expiretype");
             html.append("<select name=\"expiretype\">\n")
                 .append("  <option value=\"ALL\"").append(expiretype(expiretype, "ALL")).append(">ALL</option>\n")
                 .append("  <option value=\"INFINITY\"").append(expiretype(expiretype, "INFINITY")).append(">INFINITY</option>\n")
@@ -132,15 +132,17 @@ public class RedisManagerController {
         }
 
         html.append("<input type=\"text\" name=\"keyword\" value=\"").append(params.getString("keyword")).append("\" size=\"50\"/>\n")
-            .append("<input type=\"submit\" value=\"search\"/>\n")
-            .append("<input type=\"button\" onclick=\"refKey()\" value=\"refresh\" />")
-            .append("<div style=\"width:100%;height:3px;\"></div>");
+            .append("<input type=\"submit\" value=\"search\"/>\n");
 
-        return html.toString();
+        if (service instanceof HeavyweightRedisManagerServiceImpl) {
+            html.append("<input type=\"button\" onclick=\"refKey()\" value=\"refresh\" />");
+        }
+
+        return html.append("<div style=\"width:100%;height:3px;\"></div>").toString();
     }
 
     private String buildFoot(String contextPath) {
-        return new StringBuilder(HtmlExporter.HORIZON)
+        StringBuilder html = new StringBuilder(HtmlExporter.HORIZON)
             .append("<form method=\"DELETE\" name=\"delete\">")
             .append("<input type=\"text\" name=\"key\" />")
             .append("<input type=\"button\" onclick=\"delKey()\" value=\"delete\" />")
@@ -171,24 +173,26 @@ public class RedisManagerController {
             .append("function delKey(){")
             .append("$.ajax({url:'" + contextPath + "/redis/mgr/delete',type:'DELETE',dataType:'json',contentType:'application/json;charset=utf-8',")
             .append("data:JSON.stringify([$(\"form[name='delete'] input[name='key']\").val()]),success:function(result){alert(result.msg)}});")
-            .append("}\n")
+            .append("}\n");
 
-            .append("function refKey(){")
-            .append("$.ajax({url:'" + contextPath + "/redis/mgr/refresh',type:'POST',success:function(result){alert(result.msg)}});")
-            .append("}\n")
+            if (service instanceof HeavyweightRedisManagerServiceImpl) {
+                html.append("function refKey(){")
+                    .append("$.ajax({url:'" + contextPath + "/redis/mgr/refresh',type:'POST',success:function(result){alert(result.msg)}});")
+                    .append("}\n");
+            }
 
-            .append("function setKey(){")
-            .append("$.ajax({url:'" + contextPath + "/redis/mgr/set',type:'PUT',dataType:'json',data:{")
-            .append("key:$(\"form[name='set'] input[name='key']\").val(),")
-            .append("value:$(\"form[name='set'] input[name='value']\").val(),")
-            .append("expire:$(\"form[name='set'] input[name='expire']\").val(),")
-            .append("dataType:$(\"form[name='set'] select[name='dataType']\").val(),")
-            .append("valueType:$(\"form[name='set'] select[name='valueType']\").val()")
-            .append("},success:function(result){alert(result.msg)}});")
-            .append("}\n")
+            return html.append("function setKey(){")
+                .append("$.ajax({url:'" + contextPath + "/redis/mgr/set',type:'PUT',dataType:'json',data:{")
+                .append("key:$(\"form[name='set'] input[name='key']\").val(),")
+                .append("value:$(\"form[name='set'] input[name='value']\").val(),")
+                .append("expire:$(\"form[name='set'] input[name='expire']\").val(),")
+                .append("dataType:$(\"form[name='set'] select[name='dataType']\").val(),")
+                .append("valueType:$(\"form[name='set'] select[name='valueType']\").val()")
+                .append("},success:function(result){alert(result.msg)}});")
+                .append("}\n")
 
-            .append("</script>")
-            .toString();
+                .append("</script>")
+                .toString();
     }
 
     private String matchmode(MatchMode actual, MatchMode expect) {

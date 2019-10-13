@@ -9,7 +9,6 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.stereotype.Service;
 
 import cn.ponfee.web.framework.model.RedisKey;
 import code.ponfee.commons.io.Closeables;
@@ -21,7 +20,7 @@ import code.ponfee.commons.util.Enums;
  * 
  * @author Ponfee
  */
-@Service("lightweightRedisManagerService")
+//@Service("lightweightRedisManagerService")
 public class LightweightRedisManagerServiceImpl extends AbstractRedisManagerService {
 
     @Override

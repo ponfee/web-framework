@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * 支付流水: t_payment
  * 
- * @author 01367825
+ * @author Ponfee
  */
 public class Payment implements Serializable {
 

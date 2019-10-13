@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
 
@@ -35,7 +36,7 @@ import code.ponfee.commons.util.Enums;
  * 
  * @author Ponfee
  */
-//@Service("heavyweightRedisManagerService")
+@Service("heavyweightRedisManagerService")
 public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerService {
 
     private static final int BATCH_SIZE = 2000;
@@ -117,9 +118,11 @@ public class HeavyweightRedisManagerServiceImpl extends AbstractRedisManagerServ
         redisKeys.add(redisKey);
     }
 
-    @Override @SuppressWarnings("unlikely-arg-type")
+    @Override
     protected void onDelete(List<String> keys) {
-        redisKeys.removeAll(keys);
+        keys.stream()
+            .filter(StringUtils::isNotBlank)
+            .forEach(k -> redisKeys.remove(new RedisKey(k)));
     }
 
     // ------------------------------------------------------------------private methods

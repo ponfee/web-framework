@@ -1,6 +1,7 @@
 package cn.ponfee.web.framework.model;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Objects;
+
 import org.springframework.data.redis.connection.DataType;
 
 /**
@@ -8,7 +9,7 @@ import org.springframework.data.redis.connection.DataType;
  * 
  * @author Ponfee
  */
-public class RedisKey implements java.io.Serializable, Comparable<Object> {
+public class RedisKey implements java.io.Serializable, Comparable<RedisKey> {
 
     private static final long serialVersionUID = -134253108762088374L;
 
@@ -19,7 +20,12 @@ public class RedisKey implements java.io.Serializable, Comparable<Object> {
 
     public RedisKey() {}
 
+    public RedisKey(String key) {
+        this(key, DataType.NONE, null, -2);
+    }
+
     public RedisKey(String key, DataType type, String value, long expire) {
+        Objects.requireNonNull(key);
         this.key = key;
         this.type = type;
         this.value = value;
@@ -67,50 +73,38 @@ public class RedisKey implements java.io.Serializable, Comparable<Object> {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof RedisKey) {
-            return this.getKey().compareTo(((RedisKey) o).getKey());
-        } else if (o instanceof String) {
-            return this.getKey().compareTo((String) o);
-        } else {
-            return 1;
-        }
+    public int compareTo(RedisKey o) {
+        return this.key.compareTo(o.key);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof RedisKey) {
-            return this.getKey().equals(((RedisKey) o).getKey());
-        } else if (o instanceof String) {
-            return StringUtils.equals(this.getKey(), (String) o);
-        } else {
-            return false;
+            return this.key.equals(((RedisKey) o).key);
+        } else if (o instanceof CharSequence) {
+            return this.key.equals(((CharSequence) o).toString());
         }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return key == null ? 0 : key.hashCode();
-    }
-
-    public String[] split(String str) {
-        return this.getKey().split(str);
+        return this.key.hashCode();
     }
 
     public boolean contains(String str) {
-        return this.getKey().contains(str);
+        return this.key.contains(str);
     }
 
     public boolean startsWith(String str) {
-        return this.getKey().startsWith(str);
+        return this.key.startsWith(str);
     }
 
     public boolean endsWith(String str) {
-        return this.getKey().endsWith(str);
+        return this.key.endsWith(str);
     }
 
-    public boolean equals(String str) {
-        return this.getKey().equals(str);
+    public boolean equals(CharSequence o) {
+        return this.key.equals(o.toString());
     }
-
 }
