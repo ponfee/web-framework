@@ -28,6 +28,7 @@
       <directory>target/classes</directory>
       <excludes>
         <exclude>application.properties</exclude>
+        <exclude>jdbc.properties</exclude>
       </excludes>
       <outputDirectory>WEB-INF/classes</outputDirectory>
     </fileSet>

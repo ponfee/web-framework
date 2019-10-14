@@ -11,54 +11,58 @@
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
   ">
 
-  <bean id="defaultDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
-    init-method="init" destroy-method="close">
+  <!-- ======================================数据源配置start====================================== -->
+  <!-- 
+  <bean id="defaultDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
     <property name="driverClassName" value="${jdbc.driver.classname}" />
-    <property name="initialSize" value="1" />
-    <property name="maxActive" value="50" />
-    <property name="minIdle" value="1" />
-    <property name="maxWait" value="2000" />
-    <property name="validationQuery" value="select 1" />
-    <property name="testOnBorrow" value="true" />
-    <property name="removeAbandonedTimeout" value="120" />
-    <property name="logAbandoned" value="true" />
-    <property name="timeBetweenEvictionRunsMillis" value="58000" />
-    <property name="minEvictableIdleTimeMillis" value="60000" />
-    <property name="filters" value="config" />
     <property name="url" value="${default.jdbc.url}" />
     <property name="username" value="${default.jdbc.username}" />
     <property name="password" value="${default.jdbc.password}" />
-  </bean>
-
-  <bean id="secondaryDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
-    init-method="init" destroy-method="close">
-    <property name="driverClassName" value="${jdbc.driver.classname}" />
-    <property name="initialSize" value="1" />
-    <property name="maxActive" value="50" />
-    <property name="minIdle" value="1" />
-    <property name="maxWait" value="2000" />
+    <property name="initialSize" value="0" />
+    <property name="maxActive" value="20" />
+    <property name="minIdle" value="0" />
+    <property name="maxWait" value="5000" />
     <property name="validationQuery" value="select 1" />
+    <property name="testOnBorrow" value="true" />
+    <property name="logAbandoned" value="true" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="minEvictableIdleTimeMillis" value="1800000" />
+    <property name="removeAbandonedTimeoutMillis" value="300000" />
     <property name="filters" value="config" />
+  </bean>
+  <bean id="secondaryDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driver.classname}" />
     <property name="url" value="${secondary.jdbc.url}" />
     <property name="username" value="${secondary.jdbc.username}" />
     <property name="password" value="${secondary.jdbc.password}" />
   </bean>
-
-  <!-- =====================================数据源===================================== -->
-  <!-- <bean id="dataSource" class="code.ponfee.commons.data.lookup.MultipletScalableDataSource"> -->
   <bean id="dataSource" class="code.ponfee.commons.data.lookup.MultipletCachedDataSource">
     <constructor-arg>
       <array>
-        <!-- 如果字节码没有debug信息的编译（javac -g:none） -->
-        <!-- <bean class="code.ponfee.commons.data.NamedDataSource" 
-          c:name="default" c:dataSource-ref="defaultDataSource" /> -->
-        <bean class="code.ponfee.commons.data.NamedDataSource" 
-          c:_0="default" c:_1-ref="defaultDataSource" />
-        <bean class="code.ponfee.commons.data.NamedDataSource" 
-          c:_0="secondary" c:_1-ref="secondaryDataSource" />
+        <!—— 如果字节码没有debug信息的编译（javac -g:none） ——>
+        <!—— <bean class="code.ponfee.commons.data.NamedDataSource" c:name="default" c:dataSource-ref="defaultDataSource" /> ——>
+        <bean class="code.ponfee.commons.data.NamedDataSource" c:_0="default" c:_1-ref="defaultDataSource" />
+        <bean class="code.ponfee.commons.data.NamedDataSource" c:_0="secondary" c:_1-ref="secondaryDataSource" />
       </array>
     </constructor-arg>
   </bean>
+  -->
+
+  <bean id="propertiedNamedDruidDataSourceArray" 
+    class="code.ponfee.commons.data.lookup.PropertiedNamedDruidDataSourceArray" 
+    init-method="init" destroy-method="close">
+    <constructor-arg>
+      <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations"><list><value>classpath:jdbc.properties</value></list></property>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <!-- SPEL: https://www.jianshu.com/p/27fd3754bb9c -->
+  <bean id="dataSource" class="code.ponfee.commons.data.lookup.MultipletCachedDataSource" 
+    c:_0="#{propertiedNamedDruidDataSourceArray.getArray()}" />
+  <!-- ======================================数据源配置end====================================== -->
+
 
   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
     <property name="dataSource" ref="dataSource" />

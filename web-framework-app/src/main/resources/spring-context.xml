@@ -11,6 +11,7 @@
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd 
   ">
 
+  <!-- <context:property-placeholder location="classpath:application.properties,classpath:jdbc.properties" /> -->
   <context:property-placeholder location="classpath:application.properties" />
 
   <task:executor id="taskExecutor" pool-size="1-64"
@@ -26,6 +27,7 @@
     <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
     <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+    <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
   </context:component-scan>
 
 
