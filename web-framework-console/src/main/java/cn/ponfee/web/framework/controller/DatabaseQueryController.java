@@ -131,9 +131,12 @@ public class DatabaseQueryController implements InitializingBean {
         datasource.setUrl("");
         datasource.setUsername("");
         datasource.setPassword("");
+        // 自动重连connectionErrorRetryAttempts次后：如果breakAfterAcquireFailure=true，则中断，否则循环往复再次重连connectionErrorRetryAttempts次 
+        datasource.setConnectionErrorRetryAttempts(0); // 自动重连次数
+        datasource.setBreakAfterAcquireFailure(true); // 是否中断重新
 
         MultipletCachedDataSource mcds = SpringContextHolder.getBean(MultipletCachedDataSource.class);
-        mcds.addIfAbsent("test-dynamic-add", datasource, System.currentTimeMillis() + 120000);
+        mcds.addIfAbsent("test-dynamic-add", datasource, System.currentTimeMillis() + 12000000);
     }
 
 }
