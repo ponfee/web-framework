@@ -48,8 +48,8 @@
   </bean>
   -->
 
-  <bean id="propertiedNamedDruidDataSourceArray" 
-    class="code.ponfee.commons.data.lookup.PropertiedNamedDruidDataSourceArray" 
+  <bean id="propertiedNamedDataSourceArray" 
+    class="code.ponfee.commons.data.lookup.PropertiedNamedDataSourceArray" 
     init-method="init" destroy-method="close">
     <constructor-arg>
       <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
@@ -60,7 +60,7 @@
 
   <!-- SPEL: https://www.jianshu.com/p/27fd3754bb9c -->
   <bean id="dataSource" class="code.ponfee.commons.data.lookup.MultipletCachedDataSource" 
-    c:_0="#{propertiedNamedDruidDataSourceArray.getArray()}" />
+    c:_0="#{propertiedNamedDataSourceArray.getArray()}" />
   <!-- ======================================数据源配置end====================================== -->
 
 

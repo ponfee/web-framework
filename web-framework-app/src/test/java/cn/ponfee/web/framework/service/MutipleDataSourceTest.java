@@ -12,7 +12,7 @@ import com.github.pagehelper.PageHelper;
 
 import cn.ponfee.web.framework.BaseTest;
 import code.ponfee.commons.data.lookup.MultipleDataSourceContext;
-import code.ponfee.commons.data.lookup.MultipletScalableDataSource;
+import code.ponfee.commons.data.lookup.MultipletCachedDataSource;
 import code.ponfee.commons.mybatis.SqlMapper;
 
 /**
@@ -20,7 +20,7 @@ import code.ponfee.commons.mybatis.SqlMapper;
  *
  * @author Ponfee
  */
-public class MutipleDataSourceTest extends BaseTest<MultipletScalableDataSource> {
+public class MutipleDataSourceTest extends BaseTest<MultipletCachedDataSource> {
 
     private @Resource SqlMapper sqlMapper;
     
@@ -42,8 +42,8 @@ public class MutipleDataSourceTest extends BaseTest<MultipletScalableDataSource>
         datasource.setPassword("");
 
         PageHelper.startPage(50, 10);
-        MultipletScalableDataSource mrds = getBean();
-        mrds.add("test", datasource);
+        MultipletCachedDataSource mcds = getBean();
+        mcds.addIfAbsent("test", datasource, 0);
         MultipleDataSourceContext.set("test");
         list = sqlMapper.selectList(sql, LinkedHashMap.class);
         ((List<LinkedHashMap<String, Object>>) list).stream().forEach(map -> {

@@ -13,15 +13,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.base.Throwables;
 
 import cn.ponfee.web.framework.service.DatabaseQueryService;
 import code.ponfee.commons.collect.Collects;
 import code.ponfee.commons.data.lookup.MultipleDataSourceContext;
+import code.ponfee.commons.data.lookup.MultipletCachedDataSource;
 import code.ponfee.commons.export.HtmlExporter;
 import code.ponfee.commons.export.Table;
 import code.ponfee.commons.export.Thead;
@@ -34,6 +37,7 @@ import code.ponfee.commons.model.PageRequestParams;
 import code.ponfee.commons.model.PaginationHtmlBuilder;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.tree.BaseNode;
+import code.ponfee.commons.util.SpringContextHolder;
 import code.ponfee.commons.web.WebUtils;
 
 /**
@@ -47,10 +51,11 @@ import code.ponfee.commons.web.WebUtils;
  */
 @RequestMapping("database/query")
 @RestController
-public class DatabaseQueryController {
+public class DatabaseQueryController implements InitializingBean {
 
     private @Resource DatabaseQueryService service;
 
+    
     @GetMapping("page")
     public Result<Page<Object[]>> query4page(PageRequestParams params) {
         return Result.success(
@@ -117,6 +122,18 @@ public class DatabaseQueryController {
 
     private String datasource(String actual, String expect) {
         return expect.equals(actual) ? " selected=\"selected\"" : "";
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        DruidDataSource datasource = new DruidDataSource();
+        datasource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        datasource.setUrl("");
+        datasource.setUsername("");
+        datasource.setPassword("");
+
+        MultipletCachedDataSource mcds = SpringContextHolder.getBean(MultipletCachedDataSource.class);
+        mcds.addIfAbsent("test-dynamic-add", datasource, System.currentTimeMillis() + 120000);
     }
 
 }
