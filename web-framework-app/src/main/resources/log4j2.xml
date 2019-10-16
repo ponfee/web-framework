@@ -4,6 +4,7 @@
 <Configuration status="WARN" monitorInterval="30" strict="true" name="web-framework-log">
 
   <properties>
+    <!-- 系统属性变量：System.getProperty("log.home")，${variable_name:-default_value} -->
     <property name="LOG_HOME">${log.home}</property>
     <property name="LOG_FILE_NAME">webapp</property>
   </properties>
@@ -43,7 +44,7 @@
       Mybatis: <setting name="logImpl" value="SLF4J" />
                <setting name="logPrefix" value="dao." />
       Instead by log4jdbc: jdbc.sqltiming -->
-    <Logger name="dao" additivity="false" level="WARN" >
+    <Logger name="dao" additivity="false" level="DEBUG" >
         <AppenderRef ref="Console"/>
     </Logger>
     <!-- maven gav=com.googlecode.log4jdbc:log4jdbc:1.2
