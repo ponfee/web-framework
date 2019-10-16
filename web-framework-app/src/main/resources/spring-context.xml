@@ -11,8 +11,7 @@
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd 
   ">
 
-  <!-- <context:property-placeholder location="classpath:application.properties,classpath:jdbc.properties" /> -->
-  <context:property-placeholder location="classpath:application.properties" />
+  <context:property-placeholder location="classpath:application.properties,classpath:redis.properties" />
 
   <task:executor id="taskExecutor" pool-size="1-64"
     queue-capacity="0" keep-alive="60" rejection-policy="CALLER_RUNS" />

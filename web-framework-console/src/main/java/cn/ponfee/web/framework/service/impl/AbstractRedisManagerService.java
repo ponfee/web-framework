@@ -38,7 +38,7 @@ import code.ponfee.commons.util.Enums;
 public abstract class AbstractRedisManagerService implements RedisManagerService {
 
     protected static Logger logger = LoggerFactory.getLogger(AbstractRedisManagerService.class);
-    private static final int MAX_VALUE_SIZE = 100;
+    private static final int MAX_VALUE_LENGTH = 200;
 
     protected @Resource RedisTemplate<String, Object> redis;
 
@@ -141,8 +141,8 @@ public abstract class AbstractRedisManagerService implements RedisManagerService
                     value = redis.execute((RedisCallback<String>) conn -> {
                         return deserializeAsString(redis.getValueSerializer(), conn.get(key));
                     });
-                    if (value != null && value.length() > MAX_VALUE_SIZE) {
-                        value = value.substring(0, MAX_VALUE_SIZE) + "...";
+                    if (value != null && value.length() > MAX_VALUE_LENGTH) {
+                        value = value.substring(0, MAX_VALUE_LENGTH) + "...";
                     }
                 } catch (Exception ex) {
                     logger.error("Get redis key value occur error.", ex);
@@ -153,7 +153,9 @@ public abstract class AbstractRedisManagerService implements RedisManagerService
                 value = "[NOT STRING TYPE: " + dataType.name() + "]";
                 break;
         }
-        return new RedisKey(deserializeAsString(redis.getKeySerializer(), key), dataType, value, ttl);
+        return new RedisKey(
+            deserializeAsString(redis.getKeySerializer(), key), dataType, value, ttl
+        );
     }
 
     private String deserializeAsString(RedisSerializer<?> serializer, byte[] data) {

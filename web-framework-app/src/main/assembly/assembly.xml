@@ -28,7 +28,8 @@
       <directory>target/classes</directory>
       <excludes>
         <exclude>application.properties</exclude>
-        <exclude>jdbc.properties</exclude>
+        <exclude>jdbc.yml</exclude>
+        <exclude>redis.properties</exclude>
       </excludes>
       <outputDirectory>WEB-INF/classes</outputDirectory>
     </fileSet>

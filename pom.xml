@@ -34,7 +34,7 @@
       <properties>
         <deploy.env>dev</deploy.env>
         <deploy.version>1.0-SNAPSHOT</deploy.version>
-        <log.home>./logs</log.home>
+        <log.home>${log.home:-.}/logs/dev</log.home>
       </properties>
     </profile>
     <profile>
@@ -42,7 +42,7 @@
       <properties>
         <deploy.env>sit</deploy.env>
         <deploy.version>1.0-SNAPSHOT</deploy.version>
-        <log.home>/app/jetty/logs</log.home>
+        <log.home>/app/logs/sit</log.home>
       </properties>
     </profile>
     <profile>
@@ -50,7 +50,7 @@
       <properties>
         <deploy.env>prod</deploy.env>
         <deploy.version>1.0</deploy.version>
-        <log.home>/app/jetty/logs</log.home>
+        <log.home>/app/logs/prod</log.home>
       </properties>
     </profile>
   </profiles>
@@ -160,7 +160,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.17</version>
+      <version>8.0.18</version>
     </dependency>
     <dependency>
       <groupId>com.alibaba</groupId>
@@ -273,6 +273,13 @@
       <version>${shiro.version}</version>
     </dependency>
 
+    <!-- yaml -->
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.25</version>
+    </dependency>
+
 
     <!-- jwt -->
     <!-- <dependency>
@@ -304,12 +311,7 @@
     <dependency>
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
-      <version>2.3.28</version>
-    </dependency>
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-      <version>1.2.58</version>
+      <version>2.3.29</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
@@ -325,8 +327,6 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <!-- <include>spring/spring-datasource.xml</include>
-          <include>spring/spring-jedis.xml</include> -->
           <include>log4j2.xml</include>
         </includes>
         <!-- 需要用maven进行处理占位符的配置文件 -->

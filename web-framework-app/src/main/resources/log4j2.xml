@@ -4,7 +4,6 @@
 <Configuration status="WARN" monitorInterval="30" strict="true" name="web-framework-log">
 
   <properties>
-    <!-- <property name="LOG_HOME">${log.home:-.}/logs</property> -->
     <property name="LOG_HOME">${log.home}</property>
     <property name="LOG_FILE_NAME">webapp</property>
   </properties>
