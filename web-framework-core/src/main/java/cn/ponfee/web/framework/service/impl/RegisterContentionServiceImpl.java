@@ -29,8 +29,8 @@ public class RegisterContentionServiceImpl implements IRegisterContentionService
     private @Resource PlatformTransactionManager txManager; // DataSourceTransactionManager
 
     @Override
-    public Result<String> getOrContend(String type, String key, String[] values) {
-        String val = dao.get(type, key);
+    public Result<String> getOrContend(String typ, String key, String[] values) {
+        String val = dao.get(typ, key);
         if (val != null) {
             return Result.success(val);
         }
@@ -42,7 +42,7 @@ public class RegisterContentionServiceImpl implements IRegisterContentionService
                 new DefaultTransactionDefinition(PROPAGATION_REQUIRES_NEW) // 开启新事务
             );
             try {
-                dao.add(new RegisterContention(type, key, v));
+                dao.add(new RegisterContention(typ, key, v));
                 txManager.commit(status);
                 val = v;
                 break;
@@ -52,7 +52,7 @@ public class RegisterContentionServiceImpl implements IRegisterContentionService
         }
 
         if (val == null) {
-            val = dao.get(type, key);
+            val = dao.get(typ, key);
         }
 
         return Result.success(val);

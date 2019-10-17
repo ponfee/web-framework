@@ -101,15 +101,16 @@ CREATE TABLE IF NOT EXISTS `t_role_permit` (
 
 
 -- -----------------------------------------------------
+-- preemption抢占
 DROP TABLE IF EXISTS `t_register_contention`;
 CREATE TABLE IF NOT EXISTS `t_register_contention` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `type` varchar(20) NOT NULL COMMENT '类型',
-  `ckey` varchar(20) NOT NULL COMMENT 'key',
-  `cval` varchar(20) NOT NULL COMMENT 'value',
+  `typ` varchar(20) NOT NULL COMMENT '类型',
+  `key` varchar(20) NOT NULL COMMENT '键',
+  `val` varchar(20) NOT NULL COMMENT '值',
   PRIMARY KEY (`id`), 
-  UNIQUE KEY `uk_type_ckey` (`type`,`ckey`) USING BTREE,
-  UNIQUE KEY `uk_type_cval` (`type`,`cval`) USING BTREE 
+  UNIQUE KEY `uk_typ_key` (`typ`,`key`) USING BTREE,
+  UNIQUE KEY `uk_typ_val` (`typ`,`val`) USING BTREE 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资源注册抢占表';
 
 

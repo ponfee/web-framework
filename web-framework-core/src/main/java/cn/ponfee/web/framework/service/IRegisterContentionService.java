@@ -12,11 +12,11 @@ public interface IRegisterContentionService {
     /**
      * 获取或抢占
      * 
-     * @param type
+     * @param typ
      * @param key
      * @param values
      * @return
      */
-    Result<String> getOrContend(String type, String key, String[] values);
+    Result<String> getOrContend(String typ, String key, String[] values);
 
 }

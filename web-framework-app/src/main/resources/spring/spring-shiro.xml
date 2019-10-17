@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:c="http://www.springframework.org/schema/c"
   xmlns:aop="http://www.springframework.org/schema/aop"
   xsi:schemaLocation="
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
@@ -23,6 +24,17 @@
     <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager" />
     <property name="arguments" ref="securityManager" />
   </bean>
+
+
+  <!-- <bean id="jwtManager" class="cn.ponfee.web.framework.auth.RedisJwtManager" 
+    c:_0-ref="jedisClient" c:_1="jti:" 
+    c:_2="#{T(io.jsonwebtoken.SignatureAlgorithm).HS256}" 
+    c:_3="${jwt.exp.seconds:7200}" c:_4="${jwt.rfh.seconds:3600}" /> -->
+
+  <bean id="jwtManager" class="cn.ponfee.web.framework.auth.LocalJwtManager" 
+    c:_0="${jwt.secret:hGcWi$fl}" c:_1="#{T(io.jsonwebtoken.SignatureAlgorithm).HS256}" 
+    c:_2="${jwt.exp.seconds:7200}" c:_3="${jwt.rfh.seconds:3600}" />
+
 
   <!-- Shiro主过滤器本身功能十分强大，其强大之处就在于它支持任何基于URL路径表达式的、自定义的过滤器的执行 -->
   <!-- Web应用中，Shiro可控制的Web请求必须经过Shiro主过滤器的拦截，Shiro对基于Spring的Web应用提供了完美的支持 -->

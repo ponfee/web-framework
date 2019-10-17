@@ -13,6 +13,6 @@ public interface RegisterContentionMapper {
 
     int insert(RegisterContention rc);
 
-    String get(@Param("type") String type, @Param("ckey") String ckey);
+    String get(@Param("typ") String typ, @Param("key") String key);
 
 }

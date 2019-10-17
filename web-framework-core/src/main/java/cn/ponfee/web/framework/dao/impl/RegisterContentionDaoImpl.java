@@ -24,8 +24,8 @@ public class RegisterContentionDaoImpl implements IRegisterContentionDao {
     }
 
     @Override
-    public String get(String type, String ckey) {
-        return mapper.get(type, ckey);
+    public String get(String typ, String key) {
+        return mapper.get(typ, key);
     }
 
 }

@@ -2,14 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ponfee.web.framework.dao.mapper.RegisterContentionMapper">
 
+  <!-- preemption抢占
+    DROP TABLE IF EXISTS `t_register_contention`;
+    CREATE TABLE IF NOT EXISTS `t_register_contention` (
+      `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+      `typ` varchar(20) NOT NULL COMMENT '类型',
+      `key` varchar(20) NOT NULL COMMENT '键',
+      `val` varchar(20) NOT NULL COMMENT '值',
+      PRIMARY KEY (`id`), 
+      UNIQUE KEY `uk_typ_key` (`typ`,`key`) USING BTREE,
+      UNIQUE KEY `uk_typ_val` (`typ`,`val`) USING BTREE 
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资源注册抢占表';
+   -->
   <insert id="insert">
-    INSERT INTO t_register_contention (type, ckey, cval)
-    VALUES (#{type},#{ckey},#{cval})
+    INSERT INTO t_register_contention (typ, `key`, val)
+    VALUES (#{typ},#{key},#{val})
   </insert>
 
   <select id="get" resultType="string">
-    SELECT cval FROM t_register_contention 
-    WHERE type=#{type} AND ckey=#{ckey}
+    SELECT val FROM t_register_contention 
+    WHERE typ=#{typ} AND `key`=#{key}
   </select>
 
 </mapper>

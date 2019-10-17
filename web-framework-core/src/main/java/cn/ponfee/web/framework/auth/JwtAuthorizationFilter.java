@@ -55,7 +55,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
     private boolean passwordEncrypt; // password whether encrypt
     private String successUrl; // the default location a user is sent after login
 
-    private JwtManager jwtManager;
+    private AbstractJwtManager jwtManager;
     private IUserService userService;
     private JedisClient jedisClient;
 
@@ -138,10 +138,10 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
         // ---------------------------------------------------------authorization success
         // check whether renew jwt
-        String renewJwt = (String) jws.getBody().get(JwtManager.RENEW_JWT);
+        String renewJwt = (String) jws.getBody().get(AbstractJwtManager.RENEW_JWT);
         if (renewJwt != null) {
             WebUtils.addCookie(
-                resp, WebUtils.AUTH_COOKIE, renewJwt, Constants.ROOT_PATH, jwtManager.getJwtExpSeconds()
+                resp, WebUtils.AUTH_COOKIE, renewJwt, Constants.ROOT_PATH, jwtManager.getExpireSeconds()
             );
         }
         AppContext.currentUser(user);
@@ -222,7 +222,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
         // response the header cookie
         WebUtils.addCookie(
-            resp, WebUtils.AUTH_COOKIE, jwt, Constants.ROOT_PATH, jwtManager.getJwtExpSeconds()
+            resp, WebUtils.AUTH_COOKIE, jwt, Constants.ROOT_PATH, jwtManager.getExpireSeconds()
         );
 
         // --------------------------------------------------------login success
@@ -356,7 +356,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         this.successUrl = successUrl;
     }
 
-    public void setJwtManager(JwtManager jwtManager) {
+    public void setJwtManager(AbstractJwtManager jwtManager) {
         this.jwtManager = jwtManager;
     }
 

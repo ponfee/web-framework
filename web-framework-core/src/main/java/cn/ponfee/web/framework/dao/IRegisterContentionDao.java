@@ -11,5 +11,5 @@ public interface IRegisterContentionDao {
 
     int add(RegisterContention rc);
 
-    String get(String type, String ckey);
+    String get(String typ, String key);
 }
