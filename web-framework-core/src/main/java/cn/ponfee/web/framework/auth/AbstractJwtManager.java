@@ -43,8 +43,12 @@ public abstract class AbstractJwtManager {
         this(SignatureAlgorithm.HS256, 7200, 3600);
     }
 
-    public AbstractJwtManager(SignatureAlgorithm algorithm, int expireSeconds, int refreshSeconds) {
-        Preconditions.checkArgument(expireSeconds > refreshSeconds, "Expire must greater than refresh.");
+    public AbstractJwtManager(SignatureAlgorithm algorithm, 
+                              int expireSeconds, int refreshSeconds) {
+        Preconditions.checkArgument(
+            expireSeconds > refreshSeconds, 
+            "Expire time must greater than refresh time."
+        );
         this.algorithm = algorithm;
         this.expireSeconds = expireSeconds;
         this.refreshSeconds = refreshSeconds;
@@ -62,6 +66,22 @@ public abstract class AbstractJwtManager {
      * @return a new jwt
      */
     public abstract String create(String subject);
+
+    /**
+     * Verifies jwt
+     * 
+     * @param jwt the jwt
+     * @return a Jws object if the jwt verify success
+     * @throws InvalidJwtException  if verify fail
+     */
+    public abstract Jws<Claims> verify(String jwt) throws InvalidJwtException;
+
+    /**
+     * Revokes jwt such as logout and so on
+     * 
+     * @param jwt the jwt
+     */
+    public abstract void revoke(String jwt);
 
     protected final JwtBuilder build(String subject, byte[] secret) {
         return Jwts.builder()
@@ -84,22 +104,6 @@ public abstract class AbstractJwtManager {
         }
     }
 
-    /**
-     * Verifies jwt
-     * 
-     * @param jwt the jwt
-     * @return a Jws object if the jwt verify success
-     * @throws InvalidJwtException  if verify fail
-     */
-    public abstract Jws<Claims> verify(String jwt) throws InvalidJwtException;
-
-    /**
-     * Revokes jwt such as logout and so on
-     * 
-     * @param jwt the jwt
-     */
-    public abstract void revoke(String jwt);
-
     // ------------------------------------------------------------------getter
     public SignatureAlgorithm getAlgorithm() {
         return algorithm;
@@ -112,13 +116,4 @@ public abstract class AbstractJwtManager {
     public int getRefreshSeconds() {
         return refreshSeconds;
     }
-
-    public int getExpireMillis() {
-        return expireMillis;
-    }
-
-    public int getRefreshMillis() {
-        return refreshMillis;
-    }
-
 }

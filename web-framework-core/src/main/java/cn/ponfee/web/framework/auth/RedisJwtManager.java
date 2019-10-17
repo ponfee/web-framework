@@ -42,7 +42,7 @@ public class RedisJwtManager extends AbstractJwtManager {
 
     public String create(String subject) {
         byte[] jti    = ObjectUtils.uuid(), 
-               secret = SecureRandoms.nextBytes(16);
+               secret = SecureRandoms.nextBytes(8);
 
         jedisClient.valueOps().set(withPrefix(jti), secret, getExpireSeconds());
 
@@ -52,8 +52,8 @@ public class RedisJwtManager extends AbstractJwtManager {
     }
 
     public Jws<Claims> verify(String jwt) throws InvalidJwtException {
-        byte[] jti    = extractJti(jwt),
-               secret = jedisClient.valueOps().get(withPrefix(jti));
+        byte[] jti    = withPrefix(extractJti(jwt)),
+               secret = jedisClient.valueOps().get(jti);
 
         if (secret == null || secret.length == 0) {
             throw new InvalidJwtException("Jti not found.");
@@ -67,7 +67,7 @@ public class RedisJwtManager extends AbstractJwtManager {
             jws.getBody().put(RENEW_JWT, create(jws.getBody().getSubject()));
 
             // revoke the oldness jwt
-            jedisClient.keysOps().del(withPrefix(jti));
+            jedisClient.keysOps().del(jti);
         }
         return jws;
     }
@@ -78,8 +78,7 @@ public class RedisJwtManager extends AbstractJwtManager {
         }
 
         try {
-            byte[] jti = withPrefix(extractJti(jwt));
-            jedisClient.keysOps().del(jti);
+            jedisClient.keysOps().del(withPrefix(extractJti(jwt)));
         } catch (InvalidJwtException ignored) {
             ignored.printStackTrace();
         }
