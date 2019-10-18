@@ -89,8 +89,6 @@
     </property>
   </bean>
 
-  <bean id="dateFormat" class="code.ponfee.commons.util.WrappedFastDateFormat" c:_0="yyyy-MM-dd HH:mm:ss" />
-
   <!-- mvc注解映射的支持 -->
   <mvc:annotation-driven validator="validator" content-negotiation-manager="contentNegotiationManager">
     <mvc:message-converters register-defaults="false">
@@ -115,7 +113,9 @@
             <property name="simpleDateFormat" value="yyyy-MM-dd HH:mm:ss" />
           </bean> -->
           <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
-            <property name="dateFormat" ref="dateFormat" />
+            <property name="dateFormat">
+              <bean class="code.ponfee.commons.util.WrappedFastDateFormat" c:_0="yyyy-MM-dd HH:mm:ss" />
+            </property>
             <!-- 1、配置了则所有字符串转日期都使用此配置；2、不配置则优先使用@JsonFormat配置；
             <property name="deserializersByType">
               <map><entry key="#{T(java.util.Date)}" value="#{T(code.ponfee.commons.json.JacksonDateDeserializer).of(dateFormat)}" /></map>
