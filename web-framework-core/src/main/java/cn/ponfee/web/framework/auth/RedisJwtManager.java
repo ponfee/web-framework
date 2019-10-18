@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import code.ponfee.commons.jedis.JedisClient;
 import code.ponfee.commons.json.Jsons;
-import code.ponfee.commons.json.TypeReferences;
+import code.ponfee.commons.json.JacksonTypeReferences;
 import code.ponfee.commons.util.Base64UrlSafe;
 import code.ponfee.commons.util.Bytes;
 import code.ponfee.commons.util.ObjectUtils;
@@ -91,7 +91,7 @@ public class RedisJwtManager extends AbstractJwtManager {
             throw new InvalidJwtException("Invalid jwt.");
         }
         byte[] headerBytes = Base64UrlSafe.decode(jwt.substring(0, index));
-        Map<String, Object> header = Jsons.fromJson(headerBytes, TypeReferences.MAP_NORMAL);
+        Map<String, Object> header = Jsons.fromJson(headerBytes, JacksonTypeReferences.MAP_NORMAL);
         byte[] jti = Base64UrlSafe.decode((String) header.get(CLAIM_JTI));
         if (jti == null || jti.length == 0) {
             throw new InvalidJwtException("Invalid Jti.");

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:c="http://www.springframework.org/schema/c"
   xmlns:mvc="http://www.springframework.org/schema/mvc" 
   xmlns:aop="http://www.springframework.org/schema/aop" 
   xmlns:context="http://www.springframework.org/schema/context"
@@ -36,7 +37,6 @@
   <!-- <mvc:default-servlet-handler /> -->
   <!-- <mvc:resources mapping="/resources/**" location="/,classpath:/META-INF/publicResources/" /> -->
   <!-- <mvc:resources mapping="/static/**" location="file:///D:/app/mydist/" /> -->
-  <mvc:resources mapping="/static/**" location="/static/" />
   <mvc:resources mapping="/page/**" location="/page/" />
 
 
@@ -89,6 +89,8 @@
     </property>
   </bean>
 
+  <bean id="dateFormat" class="code.ponfee.commons.util.WrappedFastDateFormat" c:_0="yyyy-MM-dd HH:mm:ss" />
+
   <!-- mvc注解映射的支持 -->
   <mvc:annotation-driven validator="validator" content-negotiation-manager="contentNegotiationManager">
     <mvc:message-converters register-defaults="false">
@@ -110,18 +112,15 @@
         </property>
         <property name="objectMapper">
           <!-- <bean class="com.fasterxml.jackson.databind.ObjectMapper">
-            <property name="dateFormat">
-              <bean class="java.text.SimpleDateFormat">
-                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
-              </bean>
-            </property>
+            <property name="simpleDateFormat" value="yyyy-MM-dd HH:mm:ss" />
           </bean> -->
           <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
-            <property name="dateFormat">
-              <bean class="java.text.SimpleDateFormat">
-                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
-              </bean>
+            <property name="dateFormat" ref="dateFormat" />
+            <!-- 1、配置了则所有字符串转日期都使用此配置；2、不配置则优先使用@JsonFormat配置；
+            <property name="deserializersByType">
+              <map><entry key="#{T(java.util.Date)}" value="#{T(code.ponfee.commons.json.JacksonDateDeserializer).of(dateFormat)}" /></map>
             </property>
+             -->
             <property name="serializationInclusion">
               <value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
             </property>

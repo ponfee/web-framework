@@ -1,5 +1,6 @@
 package cn.ponfee.web.framework.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.Email;
@@ -8,11 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class Article {
+public class Article implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** 编号 */
     private int id;
@@ -30,9 +32,11 @@ public class Article {
     @Email(regexp = "^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$", message = "邮箱格式错误")
     private String email;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd") // 需引入joda-time
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    //@org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd") // 字符串转日期（需引入joda-time）
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") // 日期与字符串转换（覆盖spring-mvc的配置）
     private Date createDate;
+
+    private Date updateDate = new Date(); // 日期与字符串转换（使用spring-mvc配置）
 
     public Article() {}
 
@@ -81,6 +85,14 @@ public class Article {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     @Override
