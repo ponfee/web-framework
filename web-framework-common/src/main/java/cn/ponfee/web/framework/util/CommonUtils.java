@@ -82,7 +82,7 @@ public class CommonUtils {
         try {
             return CRYPTOR.decrypt(password);
         } catch (Exception e) {
-            throw new IllegalArgumentException("密码无效");
+            throw new IllegalArgumentException("Invalid password: " + password);
         }
     }
 

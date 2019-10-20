@@ -7,8 +7,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -32,8 +34,9 @@ public class Article implements Serializable {
     @Email(regexp = "^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$", message = "邮箱格式错误")
     private String email;
 
-    //@org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd") // 字符串转日期（需引入joda-time）
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") // 日期与字符串转换（覆盖spring-mvc的配置）
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // 字符串转日期（@RequestParam，需引入joda-time）
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") // 日期与字符串转换（@RequestBody，覆盖spring-mvc的配置）
+    @Past
     private Date createDate;
 
     private Date updateDate = new Date(); // 日期与字符串转换（使用spring-mvc配置）
