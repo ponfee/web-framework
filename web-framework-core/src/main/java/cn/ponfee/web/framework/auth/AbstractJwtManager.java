@@ -2,6 +2,8 @@ package cn.ponfee.web.framework.auth;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.base.Preconditions;
 
 import io.jsonwebtoken.Claims;
@@ -30,7 +32,6 @@ import io.jsonwebtoken.SignatureException;
 public abstract class AbstractJwtManager {
 
     public static final String CLAIM_RFH = "rfh";
-    public static final String RENEW_JWT = "renew-jwt";
 
     private final SignatureAlgorithm algorithm;
     private final int expireSeconds;
@@ -71,10 +72,10 @@ public abstract class AbstractJwtManager {
      * Verifies jwt
      * 
      * @param jwt the jwt
-     * @return a Jws object if the jwt verify success
+     * @return a Pair object if the jwt verify result
      * @throws InvalidJwtException  if verify fail
      */
-    public abstract Jws<Claims> verify(String jwt) throws InvalidJwtException;
+    public abstract Pair<Jws<Claims>, String> verify(String jwt) throws InvalidJwtException;
 
     /**
      * Revokes jwt such as logout and so on
@@ -83,21 +84,32 @@ public abstract class AbstractJwtManager {
      */
     public abstract void revoke(String jwt);
 
-    protected final JwtBuilder build(String subject, byte[] secret) {
+    // -------------------------------------------------------------------------------------
+    protected final JwtBuilder create(String subject, byte[] secret) {
         return Jwts.builder()
+                   .claim(CLAIM_RFH, System.currentTimeMillis() + refreshMillis)
                    .setSubject(subject)
                    .setExpiration(new Date(System.currentTimeMillis() + expireMillis))
-                   .claim(CLAIM_RFH, System.currentTimeMillis() + refreshMillis)
                    .signWith(algorithm, secret)
                    //.setId(jti);
                    //.compressWith(CompressionCodecs.DEFLATE)
         ;
     }
 
-    protected final Jws<Claims> parse(String jwt, byte[] secret) throws InvalidJwtException {
+    protected final Pair<Jws<Claims>, String> verify(String jwt, byte[] secret)
+        throws InvalidJwtException {
         try {
-            return Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt);
+            Jws<Claims> jws = Jwts.parser()
+                                  .setSigningKey(secret)
+                                  .parseClaimsJws(jwt);
+
             // ok, we can trust this jwt
+            String renewedJwt = null;
+            if ((long) jws.getBody().get(CLAIM_RFH) < System.currentTimeMillis()) {
+                // need refresh the jwt
+                renewedJwt = create(jws.getBody().getSubject());
+            }
+            return Pair.of(jws, renewedJwt);
         } catch (SignatureException e) {
             // don't trust the jwt!
             throw new InvalidJwtException(e.getMessage());

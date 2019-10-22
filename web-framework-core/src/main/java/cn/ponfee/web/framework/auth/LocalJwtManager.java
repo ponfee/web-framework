@@ -1,5 +1,7 @@
 package cn.ponfee.web.framework.auth;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,18 +26,11 @@ public class LocalJwtManager extends AbstractJwtManager {
     }
 
     public String create(String subject) {
-        return build(subject, secret).compact();
+        return create(subject, secret).compact();
     }
 
-    public Jws<Claims> verify(String jwt) throws InvalidJwtException {
-        Jws<Claims> jws = parse(jwt, secret);
-
-        long refresh = (long) jws.getBody().get(CLAIM_RFH);
-        if (refresh < System.currentTimeMillis()) {
-            // need refresh the jwt
-            jws.getBody().put(RENEW_JWT, create(jws.getBody().getSubject()));
-        }
-        return jws;
+    public Pair<Jws<Claims>, String> verify(String jwt) throws InvalidJwtException {
+        return verify(jwt, secret);
     }
 
     public void revoke(String jwt) {

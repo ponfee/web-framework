@@ -3,6 +3,7 @@ package cn.ponfee.web.framework.auth;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import code.ponfee.commons.jedis.JedisClient;
 import code.ponfee.commons.json.Jsons;
@@ -29,8 +30,9 @@ public class RedisJwtManager extends AbstractJwtManager {
     private final JedisClient jedisClient;
 
     public RedisJwtManager(JedisClient jedisClient) {
+        super();
         this.jedisClient = jedisClient;
-        this.redisKeyPrefix = "jti".getBytes();
+        this.redisKeyPrefix = "jti:".getBytes();
     }
 
     public RedisJwtManager(JedisClient jedisClient, String redisKeyPrefix,
@@ -46,12 +48,12 @@ public class RedisJwtManager extends AbstractJwtManager {
 
         jedisClient.valueOps().set(withPrefix(jti), secret, getExpireSeconds());
 
-        return build(subject, secret)
+        return create(subject, secret)
                 .setHeaderParam(CLAIM_JTI, Base64UrlSafe.encode(jti))
                 .compact();
     }
 
-    public Jws<Claims> verify(String jwt) throws InvalidJwtException {
+    public Pair<Jws<Claims>, String> verify(String jwt) throws InvalidJwtException {
         byte[] jti    = withPrefix(extractJti(jwt)),
                secret = jedisClient.valueOps().get(jti);
 
@@ -59,17 +61,12 @@ public class RedisJwtManager extends AbstractJwtManager {
             throw new InvalidJwtException("Jti not found.");
         }
 
-        Jws<Claims> jws = parse(jwt, secret);
-
-        long refresh = (long) jws.getBody().get(CLAIM_RFH);
-        if (refresh < System.currentTimeMillis()) {
-            // need refresh the jwt
-            jws.getBody().put(RENEW_JWT, create(jws.getBody().getSubject()));
-
+        Pair<Jws<Claims>, String> result = verify(jwt, secret);
+        if (result.getRight() != null) {
             // revoke the oldness jwt
             jedisClient.keysOps().del(jti);
         }
-        return jws;
+        return result;
     }
 
     public void revoke(String jwt) {

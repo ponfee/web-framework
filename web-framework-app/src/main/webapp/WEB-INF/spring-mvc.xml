@@ -33,11 +33,12 @@
 
   <!-- don't handle the static resource，静态资源的请求交由web应用服务器默认的servlet处理 -->
   <!-- http://www.cnblogs.com/fangqi/archive/2012/10/28/2743108.html -->
-  <!-- location：文件目录位置；mapping：访问地址； -->
+  <!-- mapping：访问地址；location：文件目录位置； -->
   <!-- <mvc:default-servlet-handler /> -->
   <!-- <mvc:resources mapping="/resources/**" location="/,classpath:/META-INF/publicResources/" /> -->
   <!-- <mvc:resources mapping="/static/**" location="file:///D:/app/mydist/" /> -->
   <mvc:resources mapping="/page/**" location="/page/" />
+  <mvc:resources mapping="/favicon.ico" location="/page/favicon.ico"/>
 
 
 
@@ -118,9 +119,11 @@
             </property>
             <!-- 1、配置了则所有字符串转日期都使用此配置；2、不配置则优先使用@JsonFormat配置；
             <property name="deserializersByType">
-              <map><entry key="#{T(java.util.Date)}" value="#{T(code.ponfee.commons.json.JacksonDateDeserializer).of(dateFormat)}" /></map>
-            </property>
-             -->
+              <map>
+                <entry key="#{T(java.util.Date)}" value="#{T(code.ponfee.commons.json.JacksonDateDeserializer).of(dateFormat)}" />
+                <entry key="#{T(java.time.LocalDateTime)}" value="#{T(com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer).getConstructor().newInstance()}" />
+              </map>
+            </property> -->
             <property name="serializationInclusion">
               <value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
             </property>

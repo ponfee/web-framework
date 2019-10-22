@@ -72,6 +72,7 @@
         /page/500.html=anon
         /page/static/**=anon
         /page/favicon.ico=anon
+        /favicon.ico=anon
         /captcha.json=anon
         /**=authc
       </value>

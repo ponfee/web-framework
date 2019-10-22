@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,9 +105,9 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }*/
 
         // verify the jwt for authentication
-        Jws<Claims> jws;
+        Pair<Jws<Claims>, String> pair;
         try {
-            jws = jwtManager.verify(WebUtils.getCookie(req, WebUtils.AUTH_COOKIE));
+            pair = jwtManager.verify(WebUtils.getCookie(req, WebUtils.AUTH_COOKIE));
         } catch (Exception e) {
             // verify fail: unlogin or jwt expire
             //logger.debug("Verify jwt occur exception.", e);
@@ -118,7 +119,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }
 
         // verify the permission for authorization
-        String username = jws.getBody().getSubject();
+        String username = pair.getLeft().getBody().getSubject();
         User user = userService.getByUsername(username).getData();
         String fail = (user == null)
                       ? "用户不存在"
@@ -138,10 +139,10 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
         // ---------------------------------------------------------authorization success
         // check whether renew jwt
-        String renewJwt = (String) jws.getBody().get(AbstractJwtManager.RENEW_JWT);
-        if (renewJwt != null) {
+        String renewedJwt = (String) pair.getRight();
+        if (renewedJwt != null) {
             WebUtils.addCookie(
-                resp, WebUtils.AUTH_COOKIE, renewJwt, Constants.ROOT_PATH, jwtManager.getExpireSeconds()
+                resp, WebUtils.AUTH_COOKIE, renewedJwt, Constants.ROOT_PATH, jwtManager.getExpireSeconds()
             );
         }
         AppContext.currentUser(user);
@@ -238,7 +239,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         if (StringUtils.isNotBlank(jwt)) {
             // 判断用户是否已经登录
             try {
-                String username = jwtManager.verify(jwt).getBody().getSubject();
+                String username = jwtManager.verify(jwt).getLeft().getBody().getSubject();
                 User user = userService.getByUsername(username).getData();
                 if (user != null && !user.isDeleted() && user.getStatus() == User.STATUS_ENABLE) {
                     response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl);
