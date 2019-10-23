@@ -28,8 +28,7 @@ import code.ponfee.commons.model.PageHandler;
 public class UserDaoImpl implements IUserDao {
 
     private static final int CACHE_USER_TM = 86400;
-    private static final String KEY_PREFIX = "user:cache:";
-    private static final String UNAME_KEY_PREFIX = KEY_PREFIX + "unm:#{uname}";
+    private static final String UNAME_KEY_PREFIX = "user:cache:unm:#{uname}";
 
     private @Resource UserMapper mapper;
     private @Resource UserRoleMapper userRolemapper;
