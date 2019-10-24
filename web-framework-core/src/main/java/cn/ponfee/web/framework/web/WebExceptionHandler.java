@@ -13,6 +13,10 @@ import code.ponfee.commons.web.AbstractWebExceptionHandler;
 @ControllerAdvice
 public class WebExceptionHandler extends AbstractWebExceptionHandler {
 
+    public WebExceptionHandler() {
+        super("/static/page/401.html", "/static/page/500.html", "Server error.");
+    }
+
     @Override
     protected void handErrorPage(HttpServletRequest req, HttpServletResponse resp, String page) {
         try {

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    private @Value("${home.page:/page/index.html}") String homePage;
+    private @Value("${home.page:/static/page/index.html}") String homePage;
 
     @GetMapping("/")
     public String home() {

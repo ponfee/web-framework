@@ -8,6 +8,7 @@ import static code.ponfee.commons.model.ResultCode.REDIRECT;
 import static code.ponfee.commons.model.ResultCode.UNAUTHORIZED;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.servlet.ServletRequest;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
@@ -55,6 +58,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
     private boolean loginWithCaptcha; // login whether use captcha
     private boolean passwordEncrypt; // password whether encrypt
     private String successUrl; // the default location a user is sent after login
+    private String[] authUserUrl; // logined user access url
 
     private AbstractJwtManager jwtManager;
     private IUserService userService;
@@ -133,7 +137,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }
 
         // check the user has spec url permission
-        if (UrlPermissionMatcher.hasNotPermission(requestURI, user.getId())) {
+        if (isNotAuthUserUrl(requestURI) && UrlPermissionMatcher.hasNotPermission(requestURI, user.getId())) {
             return response(req, resp, UNAUTHORIZED, super.getUnauthorizedUrl());
         }
 
@@ -336,6 +340,25 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         return false;
     }
 
+    private boolean isAuthUserUrl(String url) {
+        if (authUserUrl == null) {
+            return false;
+        }
+
+        for (String auu : authUserUrl) {
+            if (UrlPermissionMatcher.MATCHER.match(auu, url)) {
+                return true;
+            }
+        }
+
+        return false;
+        //return ArrayUtils.contains(authUserUrl, url);
+    }
+
+    private boolean isNotAuthUserUrl(String url) {
+        return !isAuthUserUrl(url);
+    }
+
     // --------------------------------------------------------------------------------------------getter/setter
     public void setLoginAction(String loginAction) {
         this.loginAction = loginAction;
@@ -355,6 +378,14 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
     public void setSuccessUrl(String successUrl) {
         this.successUrl = successUrl;
+    }
+
+    public void setAuthUserUrl(String[] authUserUrl) {
+        authUserUrl = Arrays.stream(ObjectUtils.defaultIfNull(authUserUrl, ArrayUtils.EMPTY_STRING_ARRAY))
+                            .filter(StringUtils::isNotEmpty)
+                            .distinct()
+                            .toArray(String[]::new);
+        this.authUserUrl = ArrayUtils.isEmpty(authUserUrl) ? null : authUserUrl;
     }
 
     public void setJwtManager(AbstractJwtManager jwtManager) {

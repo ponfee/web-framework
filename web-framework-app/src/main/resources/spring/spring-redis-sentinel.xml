@@ -64,6 +64,7 @@
     </property>
     <property name="defaultSerializer">
       <bean class="code.ponfee.commons.jedis.spring.KryoRedisSerializer" />
+      <!-- <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" /> -->
     </property>
   </bean>
 

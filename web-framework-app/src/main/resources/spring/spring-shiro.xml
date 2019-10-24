@@ -41,9 +41,9 @@
   <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
     <!-- Shiro的核心安全接口，这个属性是必须的 -->
     <property name="securityManager" ref="securityManager" />
-    <property name="loginUrl" value="/page/login.html" />
-    <property name="unauthorizedUrl" value="/page/401.html" />
-    <!-- <property name="successUrl" value="/page/index.html"/> AuthenticationFilter -->
+    <property name="loginUrl" value="/static/page/login.html" />
+    <!-- <property name="successUrl" value="${home.page:/static/page/index.html}"/> org.apache.shiro.web.filter.authc.AuthenticationFilter -->
+    <property name="unauthorizedUrl" value="/static/page/401.html" />
     <property name="filters">
       <map>
         <entry key="authc">
@@ -52,7 +52,8 @@
             <property name="logoutAction" value="/logout" />
             <property name="loginWithCaptcha" value="false" />
             <property name="passwordEncrypt" value="${password.encrypt:false}" />
-            <property name="successUrl" value="${home.page:/page/index.html}" />
+            <property name="successUrl" value="${home.page:/static/page/index.html}" />
+            <property name="authUserUrl" value="${auth.user.url:/,/static/page/index.html}" />
             <property name="jwtManager" ref="jwtManager" />
             <property name="userService" ref="userService" />
             <property name="jedisClient" ref="jedisClient" />
@@ -67,13 +68,17 @@
     <!-- authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter -->
     <property name="filterChainDefinitions">
       <value>
-        /page/401.html=anon
-        /page/404.html=anon
-        /page/500.html=anon
-        /page/static/**=anon
-        /page/favicon.ico=anon
+        /static/css/**=anon
+        /static/font/**=anon
+        /static/img/**=anon
+        /static/js/**=anon
+        /static/page/401.html=anon
+        /static/page/404.html=anon
+        /static/page/500.html=anon
+        /static/page/favicon.ico=anon
         /favicon.ico=anon
         /captcha.json=anon
+        # /static/page/index.html=user (当为user过滤器的，未登录用户访问此url会被UserFilter.onAccessDenied处理，直接跳转到AccessControlFilter配置的loginUrl)
         /**=authc
       </value>
     </property>

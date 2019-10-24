@@ -160,15 +160,15 @@
 
   <error-page>
     <error-code>403</error-code>
-    <location>/page/404.html</location>
+    <location>/static/page/404.html</location>
   </error-page>
   <error-page>
     <error-code>404</error-code>
-    <location>/page/404.html</location>
+    <location>/static/page/404.html</location>
   </error-page>
   <error-page>
     <error-code>500</error-code>
-    <location>/page/500.html</location>
+    <location>/static/page/500.html</location>
   </error-page>
 
 
@@ -184,7 +184,7 @@
 
 
   <!-- <welcome-file-list>
-    <welcome-file>page/dist/index.html</welcome-file>
+    <welcome-file>/static/page/index.html</welcome-file>
   </welcome-file-list> -->
 
 

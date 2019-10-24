@@ -37,8 +37,8 @@
   <!-- <mvc:default-servlet-handler /> -->
   <!-- <mvc:resources mapping="/resources/**" location="/,classpath:/META-INF/publicResources/" /> -->
   <!-- <mvc:resources mapping="/static/**" location="file:///D:/app/mydist/" /> -->
-  <mvc:resources mapping="/page/**" location="/page/" />
-  <mvc:resources mapping="/favicon.ico" location="/page/favicon.ico"/>
+  <mvc:resources mapping="/static/**"   location="/static/" />
+  <mvc:resources mapping="/favicon.ico" location="/static/page/favicon.ico"/>
 
 
 
@@ -239,7 +239,7 @@
 
 
   <!-- 配置“/”为默认首页 -->
-  <!-- <mvc:view-controller path="/" view-name="page/dist/index.html" /> -->
+  <!-- <mvc:view-controller path="/" view-name="/static/page/index.html" /> -->
 
 
   <!-- spring mvc interceptors -->

@@ -10,13 +10,13 @@
     <fileSet>
       <directory>src/main/webapp</directory>
       <excludes>
-        <exclude>page/templates/**</exclude>
+        <exclude>static/page/templates/**</exclude>
       </excludes>
       <outputDirectory></outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>src/main/webapp/page/templates</directory>
-      <outputDirectory>templates</outputDirectory>
+      <directory>src/main/webapp/static/page/templates</directory>
+      <outputDirectory>static/templates</outputDirectory>
     </fileSet>
 
     <!-- 项目类及配置文件 -->

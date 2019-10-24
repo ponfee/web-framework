@@ -32,7 +32,7 @@ import code.ponfee.commons.tree.FlatNode;
  */
 public final class UrlPermissionMatcher {
 
-    private static final AntPathMatcher MATCHER = new AntPathMatcher();
+    public static final AntPathMatcher MATCHER = new AntPathMatcher();
 
     /** The system of permission urls of t_permit */
     private volatile static Map<String, FlatNode<String, Permit>> permissions;
