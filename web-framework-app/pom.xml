@@ -38,68 +38,13 @@
 
     <plugins>
 
-      <!-- Java代码混淆插件
-        http://wvengen.github.io/proguard-maven-plugin
-        https://github.com/wvengen/proguard-maven-plugin
-        https://blog.csdn.net/xiao190128/article/details/81777912
-       -->
-      <!-- <plugin>
+      <plugin>
         <groupId>com.github.wvengen</groupId>
         <artifactId>proguard-maven-plugin</artifactId>
-        <version>2.0.14</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>proguard</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
-          <obfuscate>true</obfuscate>
-          <addMavenDescriptor>false</addMavenDescriptor>
-          <inFilter>!application.properties</inFilter>
-
-          <injar>classes</injar>
-          <attach>false</attach>
-          <outjar>${project.build.finalName}-proguard.jar</outjar>
-
-          <!—— <injar>${project.build.finalName}.jar</injar>
-          <attach>true</attach>
-          <attachArtifactClassifier>proguard</attachArtifactClassifier>
-          <attachArtifactType>jar</attachArtifactType> ——>
-
-          <!—— <outputDirectory>${project.build.directory}</outputDirectory> ——>
-          <outputDirectory>${project.basedir}/../web-framework-core/target</outputDirectory>
-          <libs>
-            <lib>${java.home}/lib/rt.jar</lib>
-            <lib>${java.home}/lib/jce.jar</lib>
-            <lib>${java.home}/lib/jsse.jar</lib>
-          </libs>
-          <options>
-            <option>-target ${java.version}</option>
-            <option>-ignorewarnings</option>
-            <option>-dontshrink</option>
-            <option>-dontoptimize</option>
-            <option>-dontusemixedcaseclassnames</option>
-            <option>-dontskipnonpubliclibraryclasses</option>
-            <option>-dontskipnonpubliclibraryclassmembers</option>
-            <option>-keeppackagenames</option>
-            <option>-keep class cn.ponfee.web.framework.** { *; }</option>
-            <option>-keep interface cn.ponfee.web.framework.** { *; }</option>
-            <option>-keep enum cn.ponfee.web.framework.** { *; }</option>
-            <option>-keep @interface cn.ponfee.web.framework.** { *; }</option>
-            <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
-          </options>
+          <skip>true</skip>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.proguard</groupId>
-            <artifactId>proguard-base</artifactId>
-            <version>6.1.0</version>
-          </dependency>
-        </dependencies>
-      </plugin> -->
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

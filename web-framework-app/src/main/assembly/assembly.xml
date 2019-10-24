@@ -6,7 +6,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
 
   <fileSets>
-    <!-- 前端静态文件 -->
+    <!-- webapp目录下文件 -->
     <fileSet>
       <directory>src/main/webapp</directory>
       <excludes>
@@ -19,7 +19,7 @@
       <outputDirectory>static/templates</outputDirectory>
     </fileSet>
 
-    <!-- 项目类及配置文件 -->
+    <!-- classes目录下文件 -->
     <fileSet>
       <directory>src/main/assembly/${deploy.env}</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
@@ -33,10 +33,40 @@
       </excludes>
       <outputDirectory>WEB-INF/classes</outputDirectory>
     </fileSet>
-    <!-- <fileSet> 注释原因：proguard打的jar包有问题
-      <directory>target</directory>
+
+    <!-- 注释原因：proguard打的jar包有问题 -->
+    <!-- <fileSet>
+      <directory>../web-framework-common/target/</directory>
       <includes>
-        <include>${project.build.finalName}-proguard.jar</include>
+        <include>web-framework-common-${project.version}-proguard.jar</include>
+      </includes>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../web-framework-console/target/</directory>
+      <includes>
+        <include>web-framework-console-${project.version}-proguard.jar</include>
+      </includes>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../web-framework-core/target/</directory>
+      <includes>
+        <include>web-framework-core-${project.version}-proguard.jar</include>
+      </includes>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../web-framework-data/target/</directory>
+      <includes>
+        <include>web-framework-data-${project.version}-proguard.jar</include>
+      </includes>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../web-framework-demo/target/</directory>
+      <includes>
+        <include>web-framework-demo-${project.version}-proguard.jar</include>
       </includes>
       <outputDirectory>WEB-INF/lib</outputDirectory>
     </fileSet> -->
@@ -47,6 +77,13 @@
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>WEB-INF/lib</outputDirectory>
+      <!-- <excludes>
+        <exclude>${project.groupId}:web-framework-common</exclude>
+        <exclude>${project.groupId}:web-framework-console</exclude>
+        <exclude>${project.groupId}:web-framework-core</exclude>
+        <exclude>${project.groupId}:web-framework-data</exclude>
+        <exclude>${project.groupId}:web-framework-demo</exclude>
+      </excludes> -->
     </dependencySet>
   </dependencySets>
 

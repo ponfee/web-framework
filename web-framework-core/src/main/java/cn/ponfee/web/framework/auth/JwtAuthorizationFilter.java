@@ -234,7 +234,9 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         // 重置登录失败次数
         limiter.resetAction(loginTraceKey);
 
-        String redirectUrl = Optional.ofNullable(returnUrl).filter(StringUtils::isNotBlank).orElse(successUrl);
+        String redirectUrl = Optional.ofNullable(returnUrl)
+                                     .filter(StringUtils::isNotBlank)
+                                     .orElse(successUrl);
         return response(req, resp, OK, redirectUrl); // login success
     }
 
@@ -341,6 +343,10 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
     }
 
     private boolean isAuthUserUrl(String url) {
+        if (successUrl.equals(url)) {
+            return true;
+        }
+
         if (authUserUrl == null) {
             return false;
         }
