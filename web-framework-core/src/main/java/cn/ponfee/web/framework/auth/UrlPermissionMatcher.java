@@ -63,7 +63,7 @@ public final class UrlPermissionMatcher {
             FlatNode<String, Permit> node = i.next().getValue();
             Permit permit = node.getAttach();
             if (StringUtils.isNotBlank(permit.getPermitUrl()) && MATCHER.match(permit.getPermitUrl(), url)) {
-                required = true;
+                required = true; // 当t_permit表中配置了permit_url match url，则需要权限控制（比如permit_url=/**）
                 if (node.isAvailable() && userPermits.contains(node.getNid())) {
                     hasPermit = true;
                     break;

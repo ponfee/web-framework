@@ -9,7 +9,6 @@ import static code.ponfee.commons.model.ResultCode.UNAUTHORIZED;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -58,7 +57,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
     private boolean loginWithCaptcha; // login whether use captcha
     private boolean passwordEncrypt; // password whether encrypt
     private String successUrl; // the default location a user is sent after login
-    private String[] authUserUrl; // logined user access url
+    private String[] authUserUrls; // logined user access url(只要登录便有的权限页面)
 
     private AbstractJwtManager jwtManager;
     private IUserService userService;
@@ -105,7 +104,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         }
 
         /*if (UrlPermissionMatcher.isNotMapping(requestURI)) {
-            return true; // is spring mvc controller url mapping, no need login
+            return true; // if not spring mvc controller url, then anonymity permit
         }*/
 
         // verify the jwt for authentication
@@ -133,7 +132,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
                       ? "用户被锁定"
                       : null;
         if (fail != null) {
-            return response(req, resp, UNAUTHORIZED, fail, super.getUnauthorizedUrl());
+            return response(req, resp, UNAUTHORIZED, fail, super.getUnauthorizedUrl(), true);
         }
 
         // check the user has spec url permission
@@ -216,7 +215,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
 
         String fail = user.isDeleted() ? "用户已删除" : (user.getStatus() == User.STATUS_DISABLE) ? "用户被锁定" : null;
         if (fail != null) {
-            return response(req, resp, UNAUTHORIZED, fail, super.getLoginUrl());
+            return response(req, resp, UNAUTHORIZED, fail, super.getLoginUrl(), true);
         }
 
         // create a jwt
@@ -234,10 +233,9 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         // 重置登录失败次数
         limiter.resetAction(loginTraceKey);
 
-        String redirectUrl = Optional.ofNullable(returnUrl)
-                                     .filter(StringUtils::isNotBlank)
-                                     .orElse(successUrl);
-        return response(req, resp, OK, redirectUrl); // login success
+        return StringUtils.isNotBlank(returnUrl) 
+             ? response(req, resp, OK, OK.getMsg(), returnUrl, false) // login success
+             : response(req, resp, OK, OK.getMsg(), successUrl, true); // login success
     }
 
     private boolean checkLogined(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -248,7 +246,7 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
                 String username = jwtManager.verify(jwt).getLeft().getBody().getSubject();
                 User user = userService.getByUsername(username).getData();
                 if (user != null && !user.isDeleted() && user.getStatus() == User.STATUS_ENABLE) {
-                    response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl);
+                    response(req, resp, REDIRECT, "用户已登录，如需切换账户请先退出", successUrl, true);
                     return true;
                 } else {
                     doLogout(req, resp);
@@ -309,12 +307,12 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         String redirectUrl = isRootPath ? super.getLoginUrl() : HttpParams.buildUrlPath(
             super.getLoginUrl(), Files.UTF_8, ImmutableMap.of(Constants.RETURN_URL, returnUrl)
         );
-        return response(req, resp, code, msg, redirectUrl);
+        return response(req, resp, code, msg, redirectUrl, true);
     }
 
     private boolean response(HttpServletRequest req, HttpServletResponse resp,
                              ResultCode rc, String redirectUrl) throws IOException {
-        return response(req, resp, rc, rc.getMsg(), redirectUrl);
+        return response(req, resp, rc, rc.getMsg(), redirectUrl, true);
     }
 
     /**
@@ -329,12 +327,13 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
      * @throws IOException if occur IOException at response to client
      */
     private boolean response(HttpServletRequest req, HttpServletResponse resp, 
-                             ResultCode rc, String msg, String redirectUrl) throws IOException {
+                             ResultCode rc, String msg, String redirectUrl, 
+                             boolean appendMsg) throws IOException {
         redirectUrl = WebUtils.getContextPath(req) + redirectUrl;
         if (WebUtils.isAjax(req)) {
             WebUtils.respJson(resp, new Result<>(rc.getCode(), msg, redirectUrl));
         } else {
-            if (redirectUrl.equals(successUrl) || !ResultCode.isSuccessCode(rc.getCode())) {
+            if (appendMsg || !ResultCode.isSuccessCode(rc.getCode())) {
                 redirectUrl = HttpParams.buildUrlPath(redirectUrl, Files.UTF_8, ImmutableMap.of("msg", msg));
             }
             resp.sendRedirect(resp.encodeRedirectURL(redirectUrl));
@@ -347,11 +346,11 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
             return true;
         }
 
-        if (authUserUrl == null) {
+        if (authUserUrls == null) {
             return false;
         }
 
-        for (String auu : authUserUrl) {
+        for (String auu : authUserUrls) {
             if (UrlPermissionMatcher.MATCHER.match(auu, url)) {
                 return true;
             }
@@ -386,12 +385,12 @@ public class JwtAuthorizationFilter extends AuthorizationFilter {
         this.successUrl = successUrl;
     }
 
-    public void setAuthUserUrl(String[] authUserUrl) {
-        authUserUrl = Arrays.stream(ObjectUtils.defaultIfNull(authUserUrl, ArrayUtils.EMPTY_STRING_ARRAY))
-                            .filter(StringUtils::isNotEmpty)
-                            .distinct()
-                            .toArray(String[]::new);
-        this.authUserUrl = ArrayUtils.isEmpty(authUserUrl) ? null : authUserUrl;
+    public void setAuthUserUrls(String[] authUserUrls) {
+        authUserUrls = Arrays.stream(ObjectUtils.defaultIfNull(authUserUrls, ArrayUtils.EMPTY_STRING_ARRAY))
+                             .filter(StringUtils::isNotEmpty)
+                             .distinct()
+                             .toArray(String[]::new);
+        this.authUserUrls = ArrayUtils.isEmpty(authUserUrls) ? null : authUserUrls;
     }
 
     public void setJwtManager(AbstractJwtManager jwtManager) {

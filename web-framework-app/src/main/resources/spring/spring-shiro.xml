@@ -53,7 +53,7 @@
             <property name="loginWithCaptcha" value="false" />
             <property name="passwordEncrypt" value="${password.encrypt:false}" />
             <property name="successUrl" value="${home.page:/static/page/index.html}" />
-            <property name="authUserUrl" value="${auth.user.url:/,/static/page/index.html}" />
+            <property name="authUserUrls" value="${auth.user.url:/,/static/page/index.html}" /><!-- 只要登录便有的权限页面 -->
             <property name="jwtManager" ref="jwtManager" />
             <property name="userService" ref="userService" />
             <property name="jedisClient" ref="jedisClient" />

@@ -38,13 +38,13 @@
 
     <plugins>
 
-      <plugin>
+      <!-- <plugin>
         <groupId>com.github.wvengen</groupId>
         <artifactId>proguard-maven-plugin</artifactId>
         <configuration>
           <skip>true</skip>
         </configuration>
-      </plugin>
+      </plugin> -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
