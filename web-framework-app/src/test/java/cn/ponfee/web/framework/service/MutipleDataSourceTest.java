@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.github.pagehelper.PageHelper;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import code.ponfee.commons.data.lookup.MultipleDataSourceContext;
 import code.ponfee.commons.data.lookup.MultipletCachedDataSource;
 import code.ponfee.commons.mybatis.SqlMapper;
@@ -20,7 +20,7 @@ import code.ponfee.commons.mybatis.SqlMapper;
  *
  * @author Ponfee
  */
-public class MutipleDataSourceTest extends BaseTest<MultipletCachedDataSource> {
+public class MutipleDataSourceTest extends SpringBaseTest<MultipletCachedDataSource> {
 
     private @Resource SqlMapper sqlMapper;
     
@@ -37,9 +37,9 @@ public class MutipleDataSourceTest extends BaseTest<MultipletCachedDataSource> {
         System.out.println("\n======================================");
         DruidDataSource datasource = new DruidDataSource();
         datasource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        datasource.setUrl("");
-        datasource.setUsername("");
-        datasource.setPassword("");
+        datasource.setUrl("jdbc:mysql://10.202.4.26:3307/ddtm?useUnicode=true&characterEncoding=UTF8");
+        datasource.setUsername("ddt-dev");
+        datasource.setPassword("ddt-dev123456");
 
         PageHelper.startPage(50, 10);
         MultipletCachedDataSource mcds = getBean();

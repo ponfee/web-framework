@@ -15,12 +15,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import cn.ponfee.web.framework.model.Payment;
 import code.ponfee.commons.util.Dates;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class PaymentServiceTest extends BaseTest<IPaymentService> {
+public class PaymentServiceTest extends SpringBaseTest<IPaymentService> {
 
     @Test
     public void test() {

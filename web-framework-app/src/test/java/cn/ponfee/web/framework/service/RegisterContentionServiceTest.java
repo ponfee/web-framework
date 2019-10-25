@@ -6,14 +6,14 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import code.ponfee.commons.concurrent.MultithreadExecutor;
 
 /**
  *
  * @author Ponfee
  */
-public class RegisterContentionServiceTest extends BaseTest<IRegisterContentionService> {
+public class RegisterContentionServiceTest extends SpringBaseTest<IRegisterContentionService> {
 
     private static final List<String> SERVERS = Arrays.asList(
         "200.137.224.20", "131.196.240.17", "81.216.159.183", "208.253.2.72", 

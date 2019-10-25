@@ -17,7 +17,6 @@ import cn.ponfee.web.framework.model.Permit;
 import cn.ponfee.web.framework.service.IPermitService;
 import cn.ponfee.web.framework.util.Constants;
 import code.ponfee.commons.constrain.Constraint;
-import code.ponfee.commons.constrain.Constraints;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.model.ResultCode;
 import code.ponfee.commons.tree.FlatNode;
@@ -48,7 +47,7 @@ public class PermitServiceImpl implements IPermitService {
         return Result.assertAffectedOne(affectedRows);
     }
 
-    @Constraints(@Constraint(notEmpty = true, msg = "权限编号列表不能为空"))
+    @Constraint(notEmpty = true, msg = "权限编号列表不能为空")
     @Override
     public Result<Void> delete(String[] ids) {
         int affectedRows = permitDao.delByPermitIds(Lists.newArrayList(ids));

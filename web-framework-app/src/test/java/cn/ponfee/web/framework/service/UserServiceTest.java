@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import cn.ponfee.web.framework.model.User;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.Result;
@@ -20,7 +20,7 @@ import code.ponfee.commons.model.Result;
  *
  * @author Ponfee
  */
-public class UserServiceTest extends BaseTest<IUserService> {
+public class UserServiceTest extends SpringBaseTest<IUserService> {
 
     @Test
     public void save() {
@@ -35,8 +35,8 @@ public class UserServiceTest extends BaseTest<IUserService> {
         user.setCreateTm(new Date());
         user.setUpdateBy(1L);
         user.setUpdateTm(new Date());
-        print(getBean().save(user));
-        System.out.println("userId: "+user.getId());
+        consoleJson(getBean().save(user));
+        console("userId: "+user.getId());
     }
 
     @Test
@@ -45,28 +45,28 @@ public class UserServiceTest extends BaseTest<IUserService> {
         user.setId(18L);
         user.setRoleIds(Arrays.asList(1L));
         user.setUpdateBy(1L);
-        print(getBean().update(user));
-        System.out.println("userId: "+user.getId());
+        consoleJson(getBean().update(user));
+        console("userId: "+user.getId());
     }
 
     @Test
     public void checkUsernameIsExists() {
-        print(getBean().checkUsernameIsExists("admin"));
-        print(getBean().checkUsernameIsExists("abc"));
+        consoleJson(getBean().checkUsernameIsExists("admin"));
+        consoleJson(getBean().checkUsernameIsExists("abc"));
     }
 
     @Test
     public void getByUsername() {
         Result<User> result = getBean().getByUsername("username2");
         assertNotNull(result.getData());
-        print(result);
+        consoleJson(result);
     }
 
     @Test
     public void get() {
         Result<User> result = getBean().getByUsername("username1");
         assertNotNull(result.getData());
-        print(result.getData());
+        consoleJson(result.getData());
     }
 
     @Test
@@ -74,17 +74,17 @@ public class UserServiceTest extends BaseTest<IUserService> {
         Result<Page<Map<String, Object>>> result = getBean().query4page(
             ImmutableMap.of("pageSize", 5, "pageNum", 1, "nickname", "abc")
         );
-        print(result);
+        consoleJson(result);
     }
 
     @Test
     public void changeStatus() {
-        print(getBean().changeStatus(9, 10, 1));
+        consoleJson(getBean().changeStatus(9, 10, 1));
     }
 
     @Test
     public void logicDelete() {
-        print(getBean().logicDelete(new long[] { 9 }, 1L));
+        consoleJson(getBean().logicDelete(new long[] { 9 }, 1L));
     }
 
     @Test
@@ -93,17 +93,17 @@ public class UserServiceTest extends BaseTest<IUserService> {
         user.setId(9L);
         user.setNickname("test");
         user.setUpdateBy(1L);
-        print(getBean().modifyInfo(user));
+        consoleJson(getBean().modifyInfo(user));
     }
 
     @Test
     public void updateRoles() {
-        print(getBean().updateRoles(9L, new long[] { 4L }));
+        consoleJson(getBean().updateRoles(9L, new long[] { 4L }));
     }
 
     @Test
     public void queryUserRoles() {
-        print(getBean().queryUserRoles(9L));
+        consoleJson(getBean().queryUserRoles(9L));
     }
 
 }

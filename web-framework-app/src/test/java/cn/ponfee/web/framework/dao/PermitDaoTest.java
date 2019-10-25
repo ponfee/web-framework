@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import cn.ponfee.web.framework.model.Permit;
 import code.ponfee.commons.tree.FlatNode;
 import code.ponfee.commons.tree.TreeNode;
@@ -14,15 +14,15 @@ import code.ponfee.commons.tree.TreeNode;
  *
  * @author Ponfee
  */
-public class PermitDaoTest extends BaseTest<IPermitDao> {
+public class PermitDaoTest extends SpringBaseTest<IPermitDao> {
 
     @Test
     public void test1() {
         List<Permit> permits = getBean().queryAll();
-        print(permits);
+        consoleJson(permits);
         TreeNode<String, Permit> tree = Permit.buildTree(permits);
-        print(tree);
+        consoleJson(tree);
         List<FlatNode<String, Permit>> flats = tree.dfsFlat();
-        print(flats);
+        consoleJson(flats);
     }
 }

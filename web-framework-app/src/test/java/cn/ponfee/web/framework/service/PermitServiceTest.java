@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import cn.ponfee.web.framework.BaseTest;
+import cn.ponfee.web.framework.SpringBaseTest;
 import cn.ponfee.web.framework.model.Permit;
 import code.ponfee.commons.collect.Collects;
 import code.ponfee.commons.tree.FlatNode;
@@ -16,7 +16,7 @@ import code.ponfee.commons.tree.FlatNode;
  *
  * @author Ponfee
  */
-public class PermitServiceTest extends BaseTest<IPermitService> {
+public class PermitServiceTest extends SpringBaseTest<IPermitService> {
 
     @Test
     public void add() {
@@ -47,22 +47,22 @@ public class PermitServiceTest extends BaseTest<IPermitService> {
         p.setStatus(Permit.STATUS_DISABLE);
         p.setUpdateBy(2L);
         p.setPermitUrl("url");
-        print(getBean().update(p));
+        consoleJson(getBean().update(p));
     }
 
     @Test
     public void delete() {
-        print(getBean().delete(new String[] { "1000", "10001" }));
+        consoleJson(getBean().delete(new String[] { "1000", "10001" }));
     }
 
     @Test
     public void get() {
-        print(getBean().get("1000"));
+        consoleJson(getBean().get("1000"));
     }
 
     @Test
     public void permitsTree() {
-        print(getBean().treeAll());
+        consoleJson(getBean().treeAll());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class PermitServiceTest extends BaseTest<IPermitService> {
             "type", x.getAttach()==null? null:x.getAttach().getPermitType()
           );
         }).collect(Collectors.toList());
-        print(res);
+        consoleJson(res);
     }
 
     private static Permit create(String permitId, String parentId, 

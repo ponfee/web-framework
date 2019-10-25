@@ -5,7 +5,8 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
-import cn.ponfee.web.framework.BaseTest;
+
+import cn.ponfee.web.framework.SpringBaseTest;
 import cn.ponfee.web.framework.model.Role;
 
 /**
@@ -13,7 +14,7 @@ import cn.ponfee.web.framework.model.Role;
  *
  * @author Ponfee
  */
-public class RoleServiceTest extends BaseTest<IRoleService> {
+public class RoleServiceTest extends SpringBaseTest<IRoleService> {
 
     @Test
     public void add() {
@@ -24,7 +25,7 @@ public class RoleServiceTest extends BaseTest<IRoleService> {
         role.setRoleName("角色");
         role.setStatus(Role.STATUS_DISABLE);
         role.setPermitIds(Arrays.asList("1", "2", "3"));
-        print(getBean().add(role));
+        consoleJson(getBean().add(role));
     }
 
     @Test
@@ -35,41 +36,41 @@ public class RoleServiceTest extends BaseTest<IRoleService> {
         role.setRoleName("普通用户");
         role.setStatus(Role.STATUS_ENABLE);
         role.setPermitIds(Arrays.asList("4", "2", "3"));
-        print(getBean().update(role));
+        consoleJson(getBean().update(role));
     }
     
     @Test
     public void updatePermits() {
-        print(getBean().updatePermits(4L, Arrays.asList("6", "5", "7")));
+        consoleJson(getBean().updatePermits(4L, Arrays.asList("6", "5", "7")));
     }
     
     @Test
     public void queryRolePermits() {
-        print(getBean().queryRolePermits(4L));
+        consoleJson(getBean().queryRolePermits(4L));
     }
 
     @Test
     public void deleteById() {
-        print(getBean().deleteById(5L));
+        consoleJson(getBean().deleteById(5L));
     }
     
     @Test
     public void deleteByRoleCode() {
-        print(getBean().deleteByRoleCode("ROLE"));
+        consoleJson(getBean().deleteByRoleCode("ROLE"));
     }
     
     @Test
     public void getById() {
-        print(getBean().getById(4L));
+        consoleJson(getBean().getById(4L));
     }
     
     @Test
     public void getByRoleCode() {
-        print(getBean().getByRoleCode("ROLE"));
+        consoleJson(getBean().getByRoleCode("ROLE"));
     }
     
     @Test
     public void query4page() {
-        print(getBean().query4page(ImmutableMap.of("pageNum", 1, "pageSize", 5)));
+        consoleJson(getBean().query4page(ImmutableMap.of("pageNum", 1, "pageSize", 5)));
     }
 }
