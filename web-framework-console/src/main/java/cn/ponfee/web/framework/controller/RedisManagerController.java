@@ -68,7 +68,7 @@ public class RedisManagerController {
     public void query4view(PageRequestParams params, HttpServletRequest req, HttpServletResponse resp) {
         Table<RedisKey> table = new Table<>(THEADS, rk -> BeanConverts.toArray(rk, "key", "type", "expire", "value"));
         Page<RedisKey> page = service.query4page(params);
-        page.process(row -> table.addRow(row));
+        page.forEach(row -> table.addRow(row));
         table.toEnd();
         try (HtmlExporter exporter = new HtmlExporter()) {
             String contextPath = WebUtils.getContextPath(req);

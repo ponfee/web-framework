@@ -34,7 +34,7 @@
       <properties>
         <deploy.env>dev</deploy.env>
         <deploy.version>1.0-SNAPSHOT</deploy.version>
-        <log.home>${log.home:-.}/logs/dev</log.home>
+        <log.home>${log.home:-logs/dev}</log.home>
       </properties>
     </profile>
     <profile>
