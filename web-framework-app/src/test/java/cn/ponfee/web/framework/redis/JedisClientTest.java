@@ -55,4 +55,8 @@ public class JedisClientTest {
         System.out.println(user);
     }
     
+    @Test
+    public void testDel() {
+        jedisClient.keysOps().delWithWildcard("*");
+    }
 }
