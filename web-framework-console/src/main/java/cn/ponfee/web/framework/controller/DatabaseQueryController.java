@@ -82,7 +82,7 @@ public class DatabaseQueryController implements InitializingBean {
         List<BaseNode<Integer, Thead>> heads = head.map(h -> {
             int orders = order.getAndIncrement();
             Tmeta tmeta = new Tmeta(Type.CHAR, null, Align.LEFT, true, null);
-            return new BaseNode<>(orders, 0, orders, new Thead(h, tmeta, null));
+            return new BaseNode<>(orders, 0, new Thead(h, tmeta, null));
         }).collect(Collectors.toList());
 
         Table<Object[]> table = new Table<>(heads);

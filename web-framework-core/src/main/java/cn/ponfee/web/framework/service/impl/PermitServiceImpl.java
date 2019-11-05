@@ -71,7 +71,7 @@ public class PermitServiceImpl implements IPermitService {
     public Result<TreeNode<String, Permit>> treeAll() {
         List<Permit> permits = permitDao.queryAll();
         TreeNode<String, Permit> root = CollectionUtils.isEmpty(permits) 
-                                      ? TreeNode.createRoot(TreeNode.DEFAULT_ROOT_ID) 
+                                      ? TreeNode.of(TreeNode.DEFAULT_ROOT_ID, TreeNode.comparingThenComparingNid(Permit::getOrders)) 
                                       : Permit.buildTree(permits);
         return Result.success(root);
     }

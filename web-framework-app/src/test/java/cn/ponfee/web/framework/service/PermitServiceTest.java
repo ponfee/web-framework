@@ -72,7 +72,6 @@ public class PermitServiceTest extends SpringBaseTest<IPermitService> {
           return Collects.toMap(
             "nid", x.getNid(),
             "pid", x.getPid(),
-            "orders", x.getOrders(),
             "enabled", x.isEnabled(),
             "available", x.isAvailable(),
             "path", String.join(",",x.getPath()),

@@ -49,10 +49,10 @@ import code.ponfee.commons.web.WebUtils;
 public class RedisManagerController {
 
     private static final List<BaseNode<Integer, Thead>> THEADS = Arrays.asList(
-        new BaseNode<>(1, 0, 1, new Thead("key",    new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null)),
-        new BaseNode<>(2, 0, 2, new Thead("type",   new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
-        new BaseNode<>(3, 0, 3, new Thead("expire", new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
-        new BaseNode<>(4, 0, 4, new Thead("value",  new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null))
+        new BaseNode<>(1, 0, new Thead("key",    new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null)),
+        new BaseNode<>(2, 0, new Thead("type",   new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
+        new BaseNode<>(3, 0, new Thead("expire", new Tmeta(Type.CHAR, null, Align.CENTER, true, null), null)),
+        new BaseNode<>(4, 0, new Thead("value",  new Tmeta(Type.CHAR, null, Align.LEFT,   true, null), null))
     );
 
     private static final List<String> EXPIRES = Arrays.asList("ALL", "INFINITY");

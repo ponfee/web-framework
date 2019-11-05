@@ -144,14 +144,16 @@ public class Permit implements java.io.Serializable {
     }
 
     public static TreeNode<String, Permit> buildTree(List<Permit> permits) {
-        TreeNode<String, Permit> root = TreeNode.createRoot(TreeNode.DEFAULT_ROOT_ID);
+        TreeNode<String, Permit> root = TreeNode.of(
+            TreeNode.DEFAULT_ROOT_ID, TreeNode.comparingThenComparingNid(Permit::getOrders)
+        );
         root.mount(permits.stream().map(Permit::toNode).collect(Collectors.toList()));
         return root;
     }
 
     private static BaseNode<String, Permit> toNode(Permit p) {
         return new BaseNode<>(
-            p.getPermitId(), p.getParentId(), p.getOrders(), 
+            p.getPermitId(), p.getParentId(), 
             p.getStatus() == Permit.STATUS_ENABLE, p
         );
     }
