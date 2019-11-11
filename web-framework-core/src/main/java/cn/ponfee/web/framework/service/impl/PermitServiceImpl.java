@@ -1,11 +1,9 @@
 package cn.ponfee.web.framework.service.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -69,20 +67,16 @@ public class PermitServiceImpl implements IPermitService {
 
     @Override
     public Result<TreeNode<String, Permit>> treeAll() {
-        List<Permit> permits = permitDao.queryAll();
-        TreeNode<String, Permit> root = CollectionUtils.isEmpty(permits) 
-                                      ? TreeNode.of(TreeNode.DEFAULT_ROOT_ID, TreeNode.comparingThenComparingNid(Permit::getOrders)) 
-                                      : Permit.buildTree(permits);
-        return Result.success(root);
+        return Result.success(
+            Permit.buildTree(permitDao.queryAll())
+        );
     }
 
     @Override
     public Result<List<FlatNode<String, Permit>>> flatsAll() {
-        List<Permit> permits = permitDao.queryAll();
-        List<FlatNode<String, Permit>> nodes = CollectionUtils.isEmpty(permits) 
-                                             ? Collections.emptyList() 
-                                             : Permit.buildTree(permits).dfsFlat();
-        return Result.success(nodes);
+        return Result.success(
+            Permit.buildTree(permitDao.queryAll()).dfsFlat()
+        );
     }
 
 }

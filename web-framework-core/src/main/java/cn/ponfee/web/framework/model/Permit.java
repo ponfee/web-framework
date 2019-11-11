@@ -1,5 +1,6 @@
 package cn.ponfee.web.framework.model;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,9 @@ import code.ponfee.commons.tree.TreeNode;
 public class Permit implements java.io.Serializable {
 
     private static final long serialVersionUID = -2785926701672694539L;
+
+    private static final Comparator<? super TreeNode<String, Permit>> COMPARATOR = 
+        TreeNode.comparingThenComparingNid(Permit::getOrders);
 
     public static final int STATUS_DISABLE = 0; // 不可用
     public static final int STATUS_ENABLE = 1; // 可用
@@ -144,9 +148,7 @@ public class Permit implements java.io.Serializable {
     }
 
     public static TreeNode<String, Permit> buildTree(List<Permit> permits) {
-        TreeNode<String, Permit> root = TreeNode.of(
-            TreeNode.DEFAULT_ROOT_ID, TreeNode.comparingThenComparingNid(Permit::getOrders)
-        );
+        TreeNode<String, Permit> root = TreeNode.of(TreeNode.DEFAULT_ROOT_ID, COMPARATOR);
         root.mount(permits.stream().map(Permit::toNode).collect(Collectors.toList()));
         return root;
     }

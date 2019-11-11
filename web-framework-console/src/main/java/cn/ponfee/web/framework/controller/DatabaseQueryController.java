@@ -78,11 +78,10 @@ public class DatabaseQueryController implements InitializingBean {
         Stream<String> head = CollectionUtils.isEmpty(page.getRows()) 
                             ? Arrays.stream(new String[] { "无查询结果" })
                             : page.getRows().get(0).keySet().stream();
-        AtomicInteger order = new AtomicInteger(1);
+        AtomicInteger id = new AtomicInteger(1);
         List<BaseNode<Integer, Thead>> heads = head.map(h -> {
-            int orders = order.getAndIncrement();
             Tmeta tmeta = new Tmeta(Type.CHAR, null, Align.LEFT, true, null);
-            return new BaseNode<>(orders, 0, new Thead(h, tmeta, null));
+            return new BaseNode<>(id.getAndIncrement(), 0, new Thead(h, tmeta, null));
         }).collect(Collectors.toList());
 
         Table<Object[]> table = new Table<>(heads);
