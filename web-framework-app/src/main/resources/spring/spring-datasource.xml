@@ -73,11 +73,11 @@
   </bean>
 
   <!-- mybatis文件配置，扫描所有mapper xml文件 -->
-  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" 
+  <bean id="sqlSessionFactory" class="code.ponfee.commons.data.PackagesSqlSessionFactoryBean" 
     p:dataSource-ref="dataSource" 
     p:configLocation="classpath:/mybatis-conf.xml" 
-    p:mapperLocations="classpath*:cn/ponfee/web/framework/dao/xml/*.xml" 
-    p:typeAliasesPackage="cn.ponfee.web.framework.model" />
+    p:mapperLocations="classpath*:cn/ponfee/web/framework/**/dao/xml/*.xml" 
+    p:typeAliasesPackage="cn.ponfee.web.**.model" /> <!-- cn/ponfee/web/**/model -->
 
   <!-- sqlMapper -->
   <bean class="code.ponfee.commons.mybatis.SqlMapper">
@@ -163,7 +163,7 @@
       MultipleDataSourceAspect.doAround ：数据源切换正常，事务正常√
    -->
   <aop:config proxy-target-class="true">
-    <aop:pointcut id="dbTxMgrPointcut" expression="execution(public * cn.ponfee.web.framework.service.impl..*..*(..))" />
+    <aop:pointcut id="dbTxMgrPointcut" expression="execution(public * cn.ponfee.web..*.service.impl..*..*(..))" />
     <!-- 
       1、dsChangeAdvice invoke  ：<aop:advisor advice-ref="dsChangeAdvice" pointcut-ref="dbTxMgrPointcut" order="0" />
       2、dsChangeAdvice doAround：<aop:aspect ref="dsChangeAdvice" order="0"><aop:around method="doAround" pointcut-ref="dbTxMgrPointcut" /></aop:aspect>

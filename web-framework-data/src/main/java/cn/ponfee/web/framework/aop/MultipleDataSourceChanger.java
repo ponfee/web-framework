@@ -9,7 +9,7 @@ import code.ponfee.commons.data.MultipleDataSourceAspect;
 //@Component
 //@Aspect
 public class MultipleDataSourceChanger extends MultipleDataSourceAspect {
-    @Around(value = "execution(public * cn.ponfee..*.service.impl..*Impl..*(..)) && @annotation(dsn)", argNames = "pjp,dsn")
+    @Around(value = "execution(public * cn.ponfee.web..*.service.impl..*Impl..*(..)) && @annotation(dsn)", argNames = "pjp,dsn")
     @Override
     public Object doAround(ProceedingJoinPoint pjp, DataSourceNaming dsn) throws Throwable {
         return super.doAround(pjp, dsn);

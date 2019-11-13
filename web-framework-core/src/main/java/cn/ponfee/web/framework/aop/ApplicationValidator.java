@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class ApplicationValidator extends MethodValidator {
 
     @Around(
-        value = "execution(public * cn.ponfee.web.framework.service.impl..*Impl..*(..)) && @annotation(cst)", 
+        value = "execution(public * cn.ponfee.web..*.service.impl..*Impl..*(..)) && @annotation(cst)", 
         argNames = "pjp,cst"
     )
     @Override

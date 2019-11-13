@@ -14,7 +14,7 @@ import code.ponfee.commons.constrain.Jsr303Validator;
 @Order(1)
 public class WebJsr303Validator extends Jsr303Validator {
 
-    @Around("execution(public * cn.ponfee.web.framework.controller..*Controller..*(..)) && args(..,bindingResult)")
+    @Around("execution(public * cn.ponfee.web..*.controller..*Controller..*(..)) && args(..,bindingResult)")
     public Object validateParam(ProceedingJoinPoint pjp, BindingResult bindingResult) throws Throwable {
         return super.verify(pjp, bindingResult);
     }

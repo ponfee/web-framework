@@ -20,7 +20,7 @@ import code.ponfee.commons.log.LogRecorder;
 public class ApplicationLogger extends LogRecorder /*implements Ordered*/ {
 
     @Around(
-        value = "execution(public * cn.ponfee.web.framework.service.impl..*Impl..*(..)) && @annotation(log)", 
+        value = "execution(public * cn.ponfee.web..*.service.impl..*Impl..*(..)) && @annotation(log)", 
         argNames = "pjp,log"
     )
     @Override
