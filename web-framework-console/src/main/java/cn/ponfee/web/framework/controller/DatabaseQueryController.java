@@ -1,6 +1,5 @@
 package cn.ponfee.web.framework.controller;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +31,7 @@ import code.ponfee.commons.export.Tmeta;
 import code.ponfee.commons.export.Tmeta.Align;
 import code.ponfee.commons.export.Tmeta.Type;
 import code.ponfee.commons.http.ContentType;
+import code.ponfee.commons.io.Files;
 import code.ponfee.commons.model.Page;
 import code.ponfee.commons.model.PageRequestParams;
 import code.ponfee.commons.model.PaginationHtmlBuilder;
@@ -100,7 +100,7 @@ public class DatabaseQueryController implements InitializingBean {
                    .params(params);
 
             WebUtils.response(resp, ContentType.TEXT_HTML, 
-                              builder.build(), StandardCharsets.UTF_8);
+                              builder.build(), Files.UTF_8);
         } 
     }
 

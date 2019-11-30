@@ -59,7 +59,7 @@ public class PermitController {
 
     @GetMapping("tree/all")
     public Result<Map<String, Object>> treeAll() {
-        return service.treeAll().map(tree -> tree.toMap(tn -> toMap(tn), "children"));
+        return service.treeAll().map(tree -> tree.toMap(tn -> toMap(tn)));
     }
 
     @GetMapping("flats/all")

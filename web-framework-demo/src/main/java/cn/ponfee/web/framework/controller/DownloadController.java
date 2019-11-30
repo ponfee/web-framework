@@ -28,6 +28,6 @@ public class DownloadController {
     public void image(HttpServletResponse resp, @RequestParam(value = "isGzip", defaultValue = "false") boolean isGzip) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Captchas.generate(80, out, "123456");
-        WebUtils.response(resp, out.toByteArray(), ContentType.IMAGE_JPEG.value(), false);
+        WebUtils.response(resp, out.toByteArray(), ContentType.IMAGE_JPEG, false);
     }
 }
