@@ -1,6 +1,5 @@
 package cn.ponfee.web.framework.controller;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,6 +20,7 @@ import cn.ponfee.web.framework.service.IPermitService;
 import cn.ponfee.web.framework.web.AppContext;
 import code.ponfee.commons.model.Result;
 import code.ponfee.commons.tree.BaseNode;
+import code.ponfee.commons.tree.MapTreeTrait;
 
 /**
  * Role Controller
@@ -59,16 +59,16 @@ public class PermitController {
 
     @GetMapping("tree/all")
     public Result<Map<String, Object>> treeAll() {
-        return service.treeAll().map(tree -> tree.toMap(tn -> toMap(tn)));
+        return service.treeAll().map(tree -> tree.convert(tn -> convert(tn)));
     }
 
     @GetMapping("flats/all")
     public Result<List<Map<String, Object>>> flatsAll() {
-        return service.flatsAll().map(flats -> flats.stream().map(this::toMap).collect(Collectors.toList()));
+        return service.flatsAll().map(flats -> flats.stream().map(this::convert).collect(Collectors.toList()));
     }
 
-    private Map<String, Object> toMap(BaseNode<String, Permit> node) {
-        Map<String, Object> map = new LinkedHashMap<>();
+    private MapTreeTrait<String, Permit> convert(BaseNode<String, Permit> node) {
+        MapTreeTrait<String, Permit> map = new MapTreeTrait<>();
         map.put("pid", node.getPid());
         map.put("nid", node.getNid());
         map.put("available", node.isAvailable());
