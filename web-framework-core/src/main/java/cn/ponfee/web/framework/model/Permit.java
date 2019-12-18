@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import code.ponfee.commons.tree.BaseNode;
 import code.ponfee.commons.tree.TreeNode;
+import code.ponfee.commons.tree.TreeNodeBuilder;
 
 /**
  * RBAC role model
@@ -148,7 +149,7 @@ public class Permit implements java.io.Serializable {
     }
 
     public static TreeNode<String, Permit> buildTree(List<Permit> permits) {
-        TreeNode<String, Permit> root = TreeNode.of(TreeNode.DEFAULT_ROOT_ID, COMPARATOR);
+        TreeNode<String, Permit> root = TreeNodeBuilder.newBuilder(TreeNode.DEFAULT_ROOT_ID, COMPARATOR).build();
         root.mount(permits.stream().map(Permit::toNode).collect(Collectors.toList()));
         return root;
     }
